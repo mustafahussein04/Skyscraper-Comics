@@ -2,7 +2,7 @@
   <div>
 
     <!-- Navigation Bar -->
-    <nav class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center">
+    <nav class="bg-gradient-to-r from-blue-900 to-violet-700 text-white px-6 py-4 flex justify-between items-center">
       <span class="font-bold text-xl">Skyscraper Comics</span>
       <div class="flex gap-6">
         <a href="/" class="hover:underline">Home</a>
