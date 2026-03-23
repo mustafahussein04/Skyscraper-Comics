@@ -14,6 +14,14 @@ const router = createRouter({
         title: 'Home',
       },
     },
+        {
+      path: '/products',
+      name: 'Products',
+      component: () => import('../views/ProductsView.vue'),
+      meta: {
+        title: 'Our Products',
+      }
+    },
     {
       path: '/calendar',
       name: 'Calendar',
