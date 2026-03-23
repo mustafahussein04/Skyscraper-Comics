@@ -1,6 +1,12 @@
 <template>
   <admin-layout>
     <div class="grid grid-cols-12 gap-4 md:gap-6">
+      <!-- SCRUM-3 - Add button to navigate to Products page.  This should be on the splash page. -->
+      <!-- Temporary splash section-->
+      <div class="col-span-12 px-4 py-10 bg-[#170925]">   
+        <primary-button @click="goToProducts">Shop Products</primary-button> 
+      </div>
+      <!-- SCRUM-3 -->
       <div class="col-span-12 space-y-6 xl:col-span-7">
         <ecommerce-metrics />
         <monthly-target />
@@ -8,7 +14,6 @@
       <div class="col-span-12 xl:col-span-5">
         <monthly-sale />
       </div>
-
       <div class="col-span-12">
         <statistics-chart />
       </div>
@@ -32,6 +37,7 @@ import MonthlySale from '../components/ecommerce/MonthlyTarget.vue'
 import CustomerDemographic from '../components/ecommerce/CustomerDemographic.vue'
 import StatisticsChart from '../components/ecommerce/StatisticsChart.vue'
 import RecentOrders from '../components/ecommerce/RecentOrders.vue'
+import PrimaryButton from '@/components/ui/PrimaryButton.vue'
 export default {
   components: {
     AdminLayout,
@@ -41,7 +47,13 @@ export default {
     CustomerDemographic,
     StatisticsChart,
     RecentOrders,
+    PrimaryButton,    // SCRUM-3 - Import PrimaryButton component.  This should be on the splash page.
   },
   name: 'Ecommerce',
+  methods: {
+    goToProducts() {  // SCRUM-3 - Navigate to Products page.  This should be on the splash page.
+      this.$router.push('/products')
+    }
+  }                   // SCRUM-3
 }
 </script>
