@@ -7,7 +7,7 @@
               <h2 class="text-5xl mb-4 font-bold text-white">Welcome to Skyscraper Comics</h2>
               <p class="text-xl text-gray-200 mb-8">Discover your next favorite comic book or master your favorite trading card game. Where collectors and players come together.</p>
               <!-- SCRUM-3 - Add button to navigate to Products page.  This should be on the splash page. -->
-              <primary-button>Shop Products</primary-button> 
+              <primary-button @click="goToProducts">Shop Products</primary-button> 
               <!-- SCRUM-3 -->
           </div>
       </div>
