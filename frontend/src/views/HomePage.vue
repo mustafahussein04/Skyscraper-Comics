@@ -3,7 +3,10 @@
 
     <!-- Navigation Bar -->
     <nav class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center">
-      <span class="font-bold text-xl">Skyscraper Comics</span>
+      <a href="/" class="font-bold text-xl flex items-center gap-2">
+        Skyscraper Comics
+        <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
+      </a>
       <div class="flex gap-6">
         <a href="/" class="hover:underline">Home</a>
         <a href="/products" class="hover:underline">Products</a>
