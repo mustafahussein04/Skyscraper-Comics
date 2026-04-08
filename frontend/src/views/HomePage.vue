@@ -2,20 +2,41 @@
   <div>
 
     <!-- Navigation Bar -->
-    <nav class="bg-gradient-to-r from-blue-900 to-violet-700 text-white px-6 py-4 flex justify-between items-center">
-      <span class="font-bold text-xl">Skyscraper Comics</span>
-    <nav class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center">
-      <a href="/" class="font-bold text-xl flex items-center gap-2">
-        Skyscraper Comics
-        <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
-      </a>
-      <div class="flex gap-6">
-        <a href="/" class="hover:underline">Home</a>
-        <a href="/products" class="hover:underline">Products</a>
-        <a href="/events" class="hover:underline">Events</a>
-        <a href="/admin" class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900">Admin Sign In</a>
-      </div>
-    </nav>
+   <nav class="bg-gradient-to-r from-blue-900 to-violet-700 text-white px-6 py-4 flex justify-between items-center">
+  <a href="/" class="font-bold text-xl flex items-center gap-2">
+    Skyscraper Comics
+    <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
+  </a>
+  <div class="flex gap-6 items-center">
+    <RouterLink
+      to="/"
+      class="px-4 py-2 rounded-lg"
+      exact-active-class="bg-white text-blue-900"
+    >
+      Home
+    </RouterLink>
+    <RouterLink
+      to="/products"
+      class="px-4 py-2 rounded-lg"
+      active-class="bg-white text-blue-900"
+    >
+      Products
+    </RouterLink>
+    <RouterLink
+      to="/events"
+      class="px-4 py-2 rounded-lg"
+      active-class="bg-white text-blue-900"
+    >
+      Events
+    </RouterLink>
+    <RouterLink
+      to="/admin"
+      class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900 text-white transition"
+    >
+      Admin Sign In
+    </RouterLink>
+  </div>
+</nav>
 
     <!-- Front Banner -->
     <section class="bg-blue-950 text-white px-6 py-24">
@@ -106,6 +127,7 @@
 </template>
 
 <script setup>
+import { RouterLink } from 'vue-router'
 const events = [
   { title: 'Dummy Event #1', desc: 'Standard format tournament. Entry fee: $5', time: 'Mar 7 | 7:00 PM - 10:00 PM' },
   { title: 'Dummy Event #2', desc: 'Casual play and trading session for all ages', time: 'Mar 8 | 2:00 PM - 5:00 PM' },
