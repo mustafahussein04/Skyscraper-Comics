@@ -6,7 +6,7 @@
       <div class="max-w-5xl mx-auto">
         <h1 class="text-5xl font-bold mb-4">Welcome to Skyscraper Comics</h1>
         <p class="text-lg mb-8 text-gray-300 max-w-xl">
-          Discover your next favorite comic book or master your favorite trading card game.
+          Discover your next interests in comic books or your favorite trading card game.
         </p>
         <div class="flex gap-4">
           <a href="/products" class="bg-white text-blue-900 font-semibold px-6 py-3 rounded hover:bg-gray-100 transition-colors">Shop Products</a>
@@ -19,7 +19,7 @@
     <section class="px-6 py-20 bg-white">
       <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div>
-          <h2 class="text-3xl font-bold mb-4 text-gray-900">Your Local Comic &amp; Gaming Hub</h2>
+          <h2 class="text-3xl font-bold mb-4 text-gray-900">Your Local Comic Store &amp; Gaming Hub</h2>
           <p class="text-gray-600 mb-4 leading-relaxed">
             Skyscraper Comics has been serving the local community with a passion for comics,
             gaming, and collectibles. Whether you're a lifelong collector or just starting your
@@ -27,7 +27,7 @@
           </p>
           <p class="text-gray-600 mb-6 leading-relaxed">
             From the latest Marvel and DC releases to rare back issues, from Magic: The Gathering
-            booster packs to Yu-Gi-Oh! singles — we carry it all under one roof.
+            booster packs to Yu-Gi-Oh! singles — we supply it all.
           </p>
           <a href="/products" class="inline-block bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800 transition-colors font-semibold">
             Browse Our Collection
