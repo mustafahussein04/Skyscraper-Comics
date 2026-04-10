@@ -115,9 +115,10 @@
         </div>
         <div>
           <h4 class="font-bold mb-2">Contact</h4>
-          <p class="text-gray-400 text-sm">123 Comic Street</p>
-          <p class="text-gray-400 text-sm">(555) 123-4567</p>
-          <p class="text-gray-400 text-sm">info@skyscrapercomics.com</p>
+          <p class="text-gray-400 text-sm">291 Truxel Rd. Suite 11</p>
+          <p class="text-gray-400 text-sm">Sacramento, California 95833</p>
+          <p class="text-gray-400 text-sm">(916) 515-8293</p>
+          <p class="text-gray-400 text-sm">info@skyscrapercomics.shop</p>
         </div>
       </div>
       <p class="text-center text-gray-500 text-sm">© 2026 Skyscraper Comics. All rights reserved.</p>
