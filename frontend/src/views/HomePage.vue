@@ -8,26 +8,41 @@
     <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
   </a>
   <div class="flex gap-6 items-center">
-    <RouterLink
-      to="/"
-      class="px-4 py-2 rounded-lg"
-      exact-active-class="bg-white text-blue-900"
-    >
+    <RouterLink to="/" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
       Home
+      </span>
     </RouterLink>
-    <RouterLink
-      to="/products"
-      class="px-4 py-2 rounded-lg"
-      active-class="bg-white text-blue-900"
-    >
+    <RouterLink to="/products" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
       Products
+      </span>
     </RouterLink>
-    <RouterLink
-      to="/events"
-      class="px-4 py-2 rounded-lg"
-      active-class="bg-white text-blue-900"
-    >
+    <RouterLink to="/events" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
       Events
+      </span>
     </RouterLink>
     <RouterLink
       to="/admin"
