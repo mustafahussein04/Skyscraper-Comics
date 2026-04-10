@@ -126,7 +126,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RouterLink } from 'vue-router'
 const events = [
   { title: 'Dummy Event #1', desc: 'Standard format tournament. Entry fee: $5', time: 'Mar 7 | 7:00 PM - 10:00 PM' },
