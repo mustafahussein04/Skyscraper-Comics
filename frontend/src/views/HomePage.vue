@@ -106,7 +106,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto mb-8">
         <div>
           <h4 class="font-bold mb-2">Skyscraper Comics</h4>
-          <p class="text-gray-400 text-sm">Your premier destination for comic books and trading card games.</p>
+          <p class="text-gray-400 text-sm">Here in Natomas for your Comic and Trading Card game needs! Buy • Sell • Trade!!</p>
         </div>
         <div>
           <h4 class="font-bold mb-2">Hours</h4>
