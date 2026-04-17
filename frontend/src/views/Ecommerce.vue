@@ -36,7 +36,7 @@
   </admin-layout>
 </template>
 
-<script>
+<script lang="ts">
 import AdminLayout from '../components/layout/AdminLayout.vue'
 import EcommerceMetrics from '../components/ecommerce/EcommerceMetrics.vue'
 import MonthlyTarget from '../components/ecommerce/MonthlySale.vue'
@@ -56,7 +56,7 @@ export default {
     RecentOrders,
     PrimaryButton,    // SCRUM-3 - Import PrimaryButton component.  This should be on the splash page.
   },
-  name: 'Ecommerce',
+  name: 'EcommerceItem',
   methods: {
     goToProducts() {  // SCRUM-3 - Navigate to Products page.  This should be on the splash page.
       this.$router.push('/products')
