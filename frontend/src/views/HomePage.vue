@@ -14,6 +14,57 @@
         </div>
       </div>
     </section>
+    <!-- Navigation Bar -->
+   <nav class="bg-gradient-to-r from-blue-900 to-violet-700 text-white px-6 py-4 flex justify-between items-center">
+  <a href="/" class="font-bold text-xl flex items-center gap-2">
+    Skyscraper Comics
+    <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
+  </a>
+  <div class="flex gap-6 items-center">
+    <RouterLink to="/" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
+      Home
+      </span>
+    </RouterLink>
+    <RouterLink to="/products" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
+      Products
+      </span>
+    </RouterLink>
+    <RouterLink to="/events" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
+      Events
+      </span>
+    </RouterLink>
+    <RouterLink
+      to="/admin"
+      class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900 text-white transition"
+    >
+      Admin Sign In
+    </RouterLink>
+  </div>
+</nav>
 
     <!-- Welcome to Skyscraper Comics Section -->
     <section class="px-6 py-20 bg-white">
@@ -107,10 +158,34 @@
       </div>
     </section>
 
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white px-6 py-12">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto mb-8">
+        <div>
+          <h4 class="font-bold mb-2">Skyscraper Comics</h4>
+          <p class="text-gray-400 text-sm">Here in Natomas for your Comic and Trading Card game needs! Buy • Sell • Trade!!</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-2">Hours</h4>
+          <p class="text-gray-400 text-sm">Mon-Fri: 11am - 8pm</p>
+          <p class="text-gray-400 text-sm">Sat-Sun: 10am - 9pm</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-2">Contact</h4>
+          <p class="text-gray-400 text-sm">291 Truxel Rd. Suite 11</p>
+          <p class="text-gray-400 text-sm">Sacramento, California 95833</p>
+          <p class="text-gray-400 text-sm">(916) 515-8293</p>
+          <p class="text-gray-400 text-sm">info@skyscrapercomics.shop</p>
+        </div>
+      </div>
+      <p class="text-center text-gray-500 text-sm">© 2026 Skyscraper Comics. All rights reserved.</p>
+    </footer>
+
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
 const events = [
   { title: 'Dummy Event #1', desc: 'Standard format tournament. Entry fee: $5', time: 'Mar 7 | 7:00 PM - 10:00 PM' },
   { title: 'Dummy Event #2', desc: 'Casual play and trading session for all ages', time: 'Mar 8 | 2:00 PM - 5:00 PM' },
