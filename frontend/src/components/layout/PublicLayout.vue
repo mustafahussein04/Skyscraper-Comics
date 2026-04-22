@@ -1,8 +1,12 @@
 <template>
   <div class="min-h-screen flex flex-col">
     <!-- Navigation Bar -->
-    <nav class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center gap-6">
-      <a href="/" class="font-bold text-xl hover:text-gray-200 transition-colors shrink-0">Skyscraper Comics</a>
+   <nav class="bg-gradient-to-r from-blue-900 to-violet-700 text-white px-6 py-4 flex justify-between items-center">
+  <a href="/" class="font-bold text-xl flex items-center gap-2">
+    Skyscraper Comics
+    <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
+  </a>
+
 
       <!-- Search Bar -->
       <div class="flex-1 max-w-md">
@@ -19,15 +23,51 @@
         </div>
       </div>
 
-      <div class="flex gap-6 items-center shrink-0">
-        <a href="/" class="hover:underline">Home</a>
-        <a href="/products" class="hover:underline">Products</a>
-        <a href="/events" class="hover:underline">Events</a>
-        <a href="/signin" class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900 transition-colors">
-          Admin Sign In
-        </a>
-      </div>
-    </nav>
+      <div class="flex gap-6 items-center">
+    <RouterLink to="/" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
+      Home
+      </span>
+    </RouterLink>
+    <RouterLink to="/products" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
+      Products
+      </span>
+    </RouterLink>
+    <RouterLink to="/events" v-slot="{isActive}">
+      <span
+        :class="[
+          'px-4 py-2 rounded-lg transition',
+          isActive 
+            ? 'bg-white text-blue-900' 
+            : 'hover:bg-blue-800'
+        ]"
+      >
+      Events
+      </span>
+    </RouterLink>
+    <RouterLink
+      to="/admin"
+      class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900 text-white transition"
+    >
+      Admin Sign In
+    </RouterLink>
+  </div>
+</nav>
 
     <!-- Page Content -->
     <main class="flex-1">
