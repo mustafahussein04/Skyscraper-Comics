@@ -7,15 +7,14 @@
       </div>
       <div>
         <h4 class="font-bold mb-2">Hours</h4>
-          <p class="text-gray-400 text-sm">Mon-Fri: 11am - 8pm</p>
-          <p class="text-gray-400 text-sm">Sat-Sun: 10am - 9pm</p>
+          <p class="text-gray-400 text-sm">Every Day: 12pm - 10pm</p>
       </div>
       <div>
         <h4 class="font-bold mb-2">Contact</h4>
-          <p class="text-gray-400 text-sm">291 Truxel Rd. Suite 11</p>
+          <p class="text-gray-400 text-sm">3291 Truxel Rd. Suite 11</p>
           <p class="text-gray-400 text-sm">Sacramento, California 95833</p>
           <p class="text-gray-400 text-sm">(916) 515-8293</p>
-          <p class="text-gray-400 text-sm">info@skyscrapercomics.shop</p>
+          <p class="text-gray-400 text-sm">skyscrapercomics1@gmail.com</p>
       </div>
     </div>
     <div class="border-t border-gray-700 pt-6">
