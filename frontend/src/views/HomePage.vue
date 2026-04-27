@@ -82,14 +82,18 @@
     <section class="px-6 py-16 bg-white">
       <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div class="bg-gray-100 rounded-lg p-8 shadow">
-          <h3 class="font-bold text-xl mb-2">Comic Books</h3>
-          <p class="text-gray-600">New releases, back issues, and rare finds</p>
-        </div>
-        <div class="bg-gray-100 rounded-lg p-8 shadow">
-          <h3 class="font-bold text-xl mb-2">Trading Cards</h3>
-          <p class="text-gray-600">Magic, Pokemon, Yu-Gi-Oh!, and more</p>
-        </div>
+        <RouterLink to="/products">
+          <div class="bg-gray-100 rounded-lg p-8 shadow">
+            <h3 class="font-bold text-xl mb-2">Comic Books</h3>
+            <p class="text-gray-600">New releases, back issues, and rare finds</p>
+          </div>
+        </RouterLink>
+        <RouterLink to="/products">
+          <div class="bg-gray-100 rounded-lg p-8 shadow">
+            <h3 class="font-bold text-xl mb-2">Trading Cards</h3>
+            <p class="text-gray-600">Magic, Pokemon, Yu-Gi-Oh!, and more</p>
+          </div>
+        </RouterLink>
       </div>
     </section>
 
