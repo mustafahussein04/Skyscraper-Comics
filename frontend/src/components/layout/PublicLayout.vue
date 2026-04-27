@@ -24,12 +24,12 @@
       </div>
 
       <div class="flex gap-6 items-center">
-    <RouterLink to="/" v-slot="{isActive}">
+    <RouterLink to="/" v-slot="{isExactActive}">
       <span
         :class="[
           'px-4 py-2 rounded-lg transition',
-          isActive 
-            ? 'bg-white text-blue-900' 
+          isExactActive
+            ? 'bg-white text-blue-900'
             : 'hover:bg-blue-800'
         ]"
       >

@@ -18,6 +18,14 @@ const router = createRouter({
             title: 'Home',
           },
         },
+        {
+          path: 'events',
+          name: 'Events',
+          component: () => import('../views/EventsPage.vue'),
+          meta: {
+            title: 'Events',
+          },
+        },
       ],
     },
         {
