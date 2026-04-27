@@ -18,15 +18,23 @@ const router = createRouter({
             title: 'Home',
           },
         },
-      ],
-    },
         {
-      path: '/products',
-      name: 'Products',
-      component: () => import('../views/ProductsView.vue'),
-      meta: {
-        title: 'Our Products',
-      }
+          path: '/products',
+          name: 'Products',
+          component: () => import('../views/ProductsView.vue'),
+          meta: {
+            title: 'Our Products',
+          },
+        },
+        {
+          path: '/events',
+          name: 'Events',
+          component: () => import('../views/EventsView.vue'),
+          meta: {
+            title: 'Our Events',
+          },
+        },
+      ],
     },
     {
       path: '/calendar',
