@@ -79,23 +79,45 @@
     </section>
 
     <!-- Featured Categories -->
-    <section class="px-6 py-16 bg-white">
-      <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <RouterLink to="/products">
-          <div class="bg-gray-100 rounded-lg p-8 shadow">
-            <h3 class="font-bold text-xl mb-2">Comic Books</h3>
-            <p class="text-gray-600">New releases, back issues, and rare finds</p>
-          </div>
-        </RouterLink>
-        <RouterLink to="/products">
-          <div class="bg-gray-100 rounded-lg p-8 shadow">
-            <h3 class="font-bold text-xl mb-2">Trading Cards</h3>
-            <p class="text-gray-600">Magic, Pokemon, Yu-Gi-Oh!, and more</p>
-          </div>
-        </RouterLink>
+<section class="px-6 py-16 bg-white">
+  <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+    <RouterLink to="/products" class="group">
+      <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
+        <img
+          :src="comicBooksImg"
+          alt="Comic Books"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div class="absolute inset-0 bg-black/35 group-hover:bg-black/40 transition"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+        <div class="absolute bottom-6 left-6 text-white">
+          <h3 class="text-2xl font-bold mb-2">Comic Books</h3>
+          <p class="text-white/90">New releases, back issues, and rare finds</p>
+        </div>
       </div>
-    </section>
+    </RouterLink>
+
+    <RouterLink to="/products" class="group">
+      <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
+        <img
+          :src="tradingCardsImg"
+          alt="Trading Cards"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div class="absolute inset-0 bg-black/35 group-hover:bg-black/40 transition"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+        <div class="absolute bottom-6 left-6 text-white">
+          <h3 class="text-2xl font-bold mb-2">Trading Cards</h3>
+          <p class="text-white/90">Magic, Pokemon, Yu-Gi-Oh!, and more</p>
+        </div>
+      </div>
+    </RouterLink>
+  </div>
+</section>
 
     <!-- Upcoming Events -->
     <section class="px-6 py-16 bg-gray-100">
@@ -119,6 +141,10 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+
+import comicBooksImg from '@/assets/images/comic-books.jpg'
+import tradingCardsImg from '@/assets/images/trading-cards.jpg'
+
 const events = [
   { title: 'Dummy Event #1', desc: 'Standard format tournament. Entry fee: $5', time: 'Mar 7 | 7:00 PM - 10:00 PM' },
   { title: 'Dummy Event #2', desc: 'Casual play and trading session for all ages', time: 'Mar 8 | 2:00 PM - 5:00 PM' },
