@@ -56,7 +56,7 @@
     </section>
 <section class="px-6 pt-10 pb-10 bg-gray-100">
   <div class="max-w-screen-xl mx-auto">
-    <h2 class="text-3xl md:text-4xl font-bold text-center text-[#0f172a] mb-12">
+    <h2 class="text-3xl font-bold text-center mb-10">
       Why Shop With Us
     </h2>
 
