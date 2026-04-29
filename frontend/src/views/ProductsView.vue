@@ -16,6 +16,26 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import { products } from '@/mock-data/products'
+import type { Product } from '@/types/product'
 import PrimaryButton from '@/components/ui/PrimaryButton.vue';
+
+const props = defineProps<{ type: 'comics' | 'tcg' }>()
+
+const searchQuery = ref('')
+const selecteFilter = ref('All')
+
+const filteredProducts = computed(() => {
+    return products.filter((p: Product) => {
+        const matchesType = p.type === props.type
+
+        const matchesFilter = selecteFilter.value === 'All' || p.category === selecteFilter.value
+
+        const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+
+        return matchesType && matchesFilter && matchesSearch
+    })
+})
 
 </script>
