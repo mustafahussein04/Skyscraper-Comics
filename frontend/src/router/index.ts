@@ -27,13 +27,17 @@ const router = createRouter({
           },
         },
         {
-          path: 'products',
-          name: 'Products',
+          path: 'products/comics',
+          name: 'Comics',
           component: () => import('../views/ProductsView.vue'),
-          meta: {
-            title: 'Our Products',
-          }
+          props: { type: 'comics' }
         },
+        {
+          path: 'products/tcg',
+          name: 'TCG',
+          component: () => import('../views/ProductsView.vue'),
+          props: { type: 'tcg' }
+        }
       ],
     },
     {

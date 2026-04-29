@@ -36,7 +36,7 @@
       Home
       </span>
     </RouterLink>
-    <RouterLink to="/products" v-slot="{isActive}">
+    <RouterLink to="/products/comics" v-slot="{isActive}">
       <span
         :class="[
           'px-4 py-2 rounded-lg transition',
