@@ -4,14 +4,14 @@
         <p class="text-gray-600 mb-8">Browse our extensive collection of comics and trading card games.</p>
         <!-- SCRUM-5 - Search bar, and other tester buttons -->
         <div class="mb-8 bg-white px-6 py-4 rounded-lg shadow-sm flex flex-col flex-row items-center gap-4">
-            <input v-model="searchQuery" type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900" value>
+            <input v-model="searchQuery" type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900">
             <p class="text-gray-700 text-md">Filter:</p>
             <button
             v-for="filter in currentFilters"
             :key="filter"
             @click="selectedFilter = filter"
             :class="[
-                'px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap',
+                'px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap hover:bg-gray-200',
                 selectedFilter === filter 
                 ? 'bg-blue-900 text-white shadow-md' 
                 : 'bg-gray-100 text-gray-700 hover:border-blue-400'
@@ -22,7 +22,7 @@
         <!-- SCRUM-5-->
 
         <!-- Products -->
-         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 gap-6 margin-10 padding-10">
+         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 gap-6 margin-10 padding-10">
             <ProductCard 
                 v-for="Product in filteredProducts"
                 :key="Product.id"

@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <img :src="product.image" :alt="product.name" class="w-full h-48 object-cover mb-4">
+        <img :src="product.image" :alt="product.name" class="w-full h-64 object-cover mb-4">
         <div>
             <div class="flex items-center justify-between">
                 <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">{{ getBrandLabel(product.brand) }}</p>
