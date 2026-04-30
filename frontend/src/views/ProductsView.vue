@@ -5,13 +5,18 @@
         <!-- SCRUM-5 - Search bar, and other tester buttons -->
         <div class="mb-8 bg-white px-6 py-4 rounded-lg shadow-sm flex flex-col flex-row items-center gap-4">
             <input v-model="searchQuery" type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900" value>
-            <p class="text-gray-700 text-sm">Filter:</p>
-            <PrimaryButton>All</PrimaryButton>
-            <PrimaryButton>Marvel</PrimaryButton>
-            <PrimaryButton>DC</PrimaryButton>
-            <PrimaryButton>Dark Horse</PrimaryButton>
-            <PrimaryButton>Image</PrimaryButton>
-            <PrimaryButton>Other</PrimaryButton>
+            <p class="text-gray-700 text-md">Filter:</p>
+            <button
+            v-for="filter in filters"
+            :key="filter"
+            @click="selectedFilter = filter"
+            :class="[
+                'px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap',
+                selectedFilter === filter 
+                ? 'bg-blue-900 text-white shadow-md' 
+                : 'bg-gray-100 text-gray-700 hover:border-blue-400'
+            ]"
+            >{{ filter }}</button>
         </div>
         <!-- SCRUM-5-->
 
@@ -29,7 +34,6 @@
 import { ref, computed } from 'vue'
 import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
-import PrimaryButton from '@/components/ui/PrimaryButton.vue';
 import ProductCard from '@/components/products/ProductCard.vue'
 
 const props = defineProps<{
@@ -38,14 +42,15 @@ const props = defineProps<{
 
 const searchQuery = ref('')
 const selectedFilter = ref('All')
+const filters = ['All', 'Marvel', 'DC', 'Image', 'Dark Horse', 'Other']
 
 const filteredProducts = computed(() => {
     return products.filter((p: Product) => {
         const matchesType = p.type === props.type
-        const matchesFilter = selectedFilter.value === 'All' || p.type === selectedFilter.value
+        const matchesBrand = selectedFilter.value === 'All' || p.brand === selectedFilter.value
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 
-        return matchesType && matchesFilter && matchesSearch
+        return matchesType && matchesBrand && matchesSearch
     })
 })
 
