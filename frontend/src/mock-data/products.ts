@@ -17,7 +17,7 @@ export const products: Product[] = [
     price: 14.99,
     type: 'comics',
     brand: 'Marvel',
-    stock: 25,
+    stock: 4,
     description: 'Classic Batman issue',
     image: '/images/batman.jpg'
   }
