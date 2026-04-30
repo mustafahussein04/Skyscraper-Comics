@@ -7,7 +7,7 @@
             <input v-model="searchQuery" type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900" value>
             <p class="text-gray-700 text-md">Filter:</p>
             <button
-            v-for="filter in filters"
+            v-for="filter in currentFilters"
             :key="filter"
             @click="selectedFilter = filter"
             :class="[
@@ -15,6 +15,7 @@
                 selectedFilter === filter 
                 ? 'bg-blue-900 text-white shadow-md' 
                 : 'bg-gray-100 text-gray-700 hover:border-blue-400'
+                
             ]"
             >{{ filter }}</button>
         </div>
@@ -42,7 +43,11 @@ const props = defineProps<{
 
 const searchQuery = ref('')
 const selectedFilter = ref('All')
-const filters = ['All', 'Marvel', 'DC', 'Image', 'Dark Horse', 'Other']
+const comicsFilters = ['All', 'Marvel', 'DC', 'Image', 'Dark Horse', 'Other']
+const tcgFilters = ['All', 'Pokémon','Yu-Gi-Oh!', 'Magic: The Gathering', 'Other']
+const currentFilters = computed(() => {
+  return props.type === 'comics' ? comicsFilters : tcgFilters
+})
 
 const filteredProducts = computed(() => {
     return products.filter((p: Product) => {
@@ -50,6 +55,7 @@ const filteredProducts = computed(() => {
         const matchesBrand = selectedFilter.value === 'All' || p.brand === selectedFilter.value
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 
+        if (selectedFilter.value === 'Pokémon') selectedFilter.value = 'Pokemon'    // looks for products with brand: 'Pokemon' so that products.brand can have 'Pokemon' instead of 'Pokémon'
         return matchesType && matchesBrand && matchesSearch
     })
 })

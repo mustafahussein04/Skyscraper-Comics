@@ -3,7 +3,7 @@
         <img :src="product.image" :alt="product.name" class="w-full h-48 object-cover mb-4">
         <div>
             <div class="flex items-center justify-between">
-                <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">{{ product.type }}</p>
+                <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">{{ getBrandLabel(product.brand) }}</p>
                 <p class="text-sm mb-1 px-2 py-1 rounded" 
                     :class="getStockColor(product.stock)"
                 >
@@ -39,5 +39,10 @@ const getStockLabel = (stock: number) => {
   if (stock === 0) return 'Out of Stock'
   if (stock < 5) return `Limited: ${stock}`
   return `In Stock: ${stock}`
+}
+
+const getBrandLabel = (brand: string) => {  // looks for products with brand: 'Pokemon' or whichever brand is selected otherwise
+    if (brand === 'Pokemon') return 'Pokémon'
+    return brand
 }
 </script>

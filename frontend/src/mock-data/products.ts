@@ -51,5 +51,25 @@ export const products: Product[] = [
     stock: 0,
     description: 'A classic issue of Hellboy.',
     image: '/images/hellboy-1.jpg'
+  },
+  {
+    id: 5,
+    name: 'Blue-Eyes White Dragon',
+    price: 64.99,
+    type: 'tcg',
+    brand: 'Yu-Gi-Oh!',
+    stock: 1,
+    description: 'A classic card from Yu-Gi-Oh!.',
+    image: '/images/blue-eyes-white-dragon.jpg'
+  },
+  {
+    id: 6,
+    name: 'Charizard',
+    price: 64.99,
+    type: 'tcg',
+    brand: 'Pokemon',
+    stock: 1,
+    description: 'A classic card from Pokemon.',
+    image: '/images/charizard.jpg'
   }
 ]
