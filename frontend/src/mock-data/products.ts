@@ -10,5 +10,15 @@ export const products: Product[] = [
     stock: 25,
     description: 'Classic Spider-Man issue',
     image: '/images/spiderman.jpg'
+  },
+  {
+    id: 2,
+    name: 'Batman: The Dark Knight Returns',
+    price: 14.99,
+    type: 'comics',
+    brand: 'Marvel',
+    stock: 25,
+    description: 'Classic Batman issue',
+    image: '/images/batman.jpg'
   }
 ]
