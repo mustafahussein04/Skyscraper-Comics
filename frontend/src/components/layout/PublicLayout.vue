@@ -36,11 +36,11 @@
       Home
       </span>
     </RouterLink>
-    <RouterLink to="/products/comics" v-slot="{isActive}">
+    <RouterLink to="/products/comics" v-slot="{route}">
       <span
         :class="[
           'px-4 py-2 rounded-lg transition',
-          isActive 
+          route.path.startsWith('/products')
             ? 'bg-white text-blue-900' 
             : 'hover:bg-blue-800'
         ]"
