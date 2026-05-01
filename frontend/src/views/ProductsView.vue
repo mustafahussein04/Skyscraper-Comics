@@ -1,8 +1,31 @@
 <template>
+     <!-- Banner to swap between TCG and Comics -->
+    <div v-if="showBanner"
+         class="relative flex items-center justify-center gap-6 py-1 bg-blue-900 
+                px-[30%]">
+        <p class="text-white text-lg capitalize">Welcome to the {{ props.type === 'comics' ? 'Comics' : 'TCG' }} storefront!</p>
+        <RouterLink 
+        :to="props.type === 'comics' ? '/products/tcg' : '/products/comics'"
+        class="whitespace-nowrap border border-white text-white hover:bg-white hover:text-black py-1 px-2 rounded-sm transition-colors">
+            View {{ props.type === 'comics' ? 'TCG' : 'Comics' }}
+        </RouterLink>
+        <button 
+            @click="showBanner = false"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white p-1"
+            aria-label="Close banner"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
     <div class="container mx-auto px-4 py-12">
+        <!-- Page Header -->
         <h1 class="text-4xl font-bold mb-2">Our Products</h1>
         <p class="text-gray-600 mb-8">Browse our extensive collection of comics and trading card games.</p>
-        <!-- SCRUM-5 - Search bar, and other tester buttons -->
+
+        <!-- Search Bar and Filters -->
         <div class="mb-8 bg-white px-6 py-4 rounded-lg shadow-sm flex flex-col flex-row items-center gap-4">
             <input v-model="searchQuery" type="text" placeholder="Search products..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900">
             <p class="text-gray-700 text-md">Filter:</p>
@@ -19,9 +42,8 @@
             ]"
             >{{ filter }}</button>
         </div>
-        <!-- SCRUM-5-->
 
-        <!-- Products -->
+        <!-- Products Grid -->
          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 gap-6 margin-10 padding-10">
             <ProductCard 
                 v-for="Product in filteredProducts"
@@ -36,6 +58,8 @@ import { ref, computed } from 'vue'
 import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
+
+const showBanner = ref(true)
 
 const props = defineProps<{
     product: Product,
