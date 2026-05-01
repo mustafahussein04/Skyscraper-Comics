@@ -26,15 +26,19 @@ const router = createRouter({
             title: 'Events',
           },
         },
-      ],
-    },
         {
-      path: '/products',
-      name: 'Products',
-      component: () => import('../views/ProductsView.vue'),
-      meta: {
-        title: 'Our Products',
-      }
+          path: 'products/comics',
+          name: 'Comics',
+          component: () => import('../views/ProductsView.vue'),
+          props: { type: 'comics' }
+        },
+        {
+          path: 'products/tcg',
+          name: 'TCG',
+          component: () => import('../views/ProductsView.vue'),
+          props: { type: 'tcg' }
+        }
+      ],
     },
     {
       path: '/calendar',
