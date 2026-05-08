@@ -54,44 +54,98 @@
         </div>
       </div>
     </section>
+<section class="px-6 pt-10 pb-10 bg-gray-100">
+  <div class="max-w-screen-xl mx-auto">
+    <h2 class="text-3xl font-bold text-center mb-10">
+      Why Shop With Us
+    </h2>
 
-    <!-- Why Shop With Us -->
-    <section class="px-6 py-16 bg-gray-100">
-      <h2 class="text-3xl font-bold text-center mb-10">Why Shop With Us</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-        <div class="text-center p-4">
-          <h3 class="font-bold text-lg mb-2">Vast Selection</h3>
-          <p class="text-gray-600 text-sm">Browse thousands of comics and trading cards from all major publishers.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-16 gap-y-10 text-center">
+      
+      <div class="flex flex-col items-center max-w-[280px] mx-auto">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-5">
+          <img src="/images/icons/shopping-bag.svg" alt="Shopping bag icon" class="w-7 h-7" />
         </div>
-        <div class="text-center p-4">
-          <h3 class="font-bold text-lg mb-2">Weekly Events</h3>
-          <p class="text-gray-600 text-sm">Game nights, tournaments, and special release events every week.</p>
-        </div>
-        <div class="text-center p-4">
-          <h3 class="font-bold text-lg mb-2">Community</h3>
-          <p class="text-gray-600 text-sm">Connect with fellow collectors and players in a friendly environment.</p>
-        </div>
-        <div class="text-center p-4">
-          <h3 class="font-bold text-lg mb-2">Tournaments</h3>
-          <p class="text-gray-600 text-sm">Compete in organized play for Magic, Pokemon, Yu-Gi-Oh!, and more.</p>
-        </div>
+        <h3 class="text-2xl font-bold text-[#0f172a] mb-3">Vast Selection</h3>
+        <p class="text-gray-600 text-base leading-8">
+          Browse thousands of comics and trading cards from all major publishers.
+        </p>
       </div>
-    </section>
+
+      <div class="flex flex-col items-center max-w-[280px] mx-auto">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-5">
+          <img src="/images/icons/calendar.svg" alt="Calendar icon" class="w-7 h-7" />
+        </div>
+        <h3 class="text-2xl font-bold text-[#0f172a] mb-3">Weekly Events</h3>
+        <p class="text-gray-600 text-base leading-8">
+          Join us for game nights, tournaments, and special release events every week.
+        </p>
+      </div>
+
+      <div class="flex flex-col items-center max-w-[280px] mx-auto">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-5">
+          <img src="/images/icons/users.svg" alt="Users icon" class="w-7 h-7" />
+        </div>
+        <h3 class="text-2xl font-bold text-[#0f172a] mb-3">Community</h3>
+        <p class="text-gray-600 text-base leading-8">
+          Connect with fellow collectors and players in a friendly environment.
+        </p>
+      </div>
+
+      <div class="flex flex-col items-center max-w-[280px] mx-auto">
+        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-5">
+          <img src="/images/icons/trophy.svg" alt="Trophy icon" class="w-7 h-7" />
+        </div>
+        <h3 class="text-2xl font-bold text-[#0f172a] mb-3">Tournaments</h3>
+        <p class="text-gray-600 text-base leading-8">
+          Compete in organized play for Magic, Pokemon, Yu-Gi-Oh!, and more.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
 
     <!-- Featured Categories -->
-    <section class="px-6 py-16 bg-white">
-      <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div class="bg-gray-100 rounded-lg p-8 shadow">
-          <h3 class="font-bold text-xl mb-2">Comic Books</h3>
-          <p class="text-gray-600">New releases, back issues, and rare finds</p>
-        </div>
-        <div class="bg-gray-100 rounded-lg p-8 shadow">
-          <h3 class="font-bold text-xl mb-2">Trading Cards</h3>
-          <p class="text-gray-600">Magic, Pokemon, Yu-Gi-Oh!, and more</p>
+<section class="px-6 py-16 bg-white">
+  <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+    <RouterLink to="/products" class="group">
+      <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
+        <img
+          src="/images/logo/comic-books.jpg"
+          alt="Comic Books"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div class="absolute inset-0 bg-black/35 group-hover:bg-black/40 transition"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+        <div class="absolute bottom-6 left-6 text-white">
+          <h3 class="text-2xl font-bold mb-2">Comic Books</h3>
+          <p class="text-white/90">New releases, back issues, and rare finds</p>
         </div>
       </div>
-    </section>
+    </RouterLink>
+
+    <RouterLink to="/products" class="group">
+      <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
+        <img
+          src="/images/logo/trading-cards.jpg"
+          alt="Trading Cards"
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div class="absolute inset-0 bg-black/35 group-hover:bg-black/40 transition"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+
+        <div class="absolute bottom-6 left-6 text-white">
+          <h3 class="text-2xl font-bold mb-2">Trading Cards</h3>
+          <p class="text-white/90">Magic, Pokemon, Yu-Gi-Oh!, and more</p>
+        </div>
+      </div>
+    </RouterLink>
+  </div>
+</section>
 
     <!-- Upcoming Events -->
     <section class="px-6 py-16 bg-gray-100">
@@ -115,6 +169,7 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+
 const events = [
   { title: 'Dummy Event #1', desc: 'Standard format tournament. Entry fee: $5', time: 'Mar 7 | 7:00 PM - 10:00 PM' },
   { title: 'Dummy Event #2', desc: 'Casual play and trading session for all ages', time: 'Mar 8 | 2:00 PM - 5:00 PM' },
