@@ -29,8 +29,6 @@
         :class="[
           'px-4 py-2 rounded-lg transition',
           isExactActive 
-            ? 'bg-white text-blue-900' 
-          isExactActive
             ? 'bg-white text-blue-900'
             : 'hover:bg-blue-800'
         ]"
