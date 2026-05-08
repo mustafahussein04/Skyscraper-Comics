@@ -40,7 +40,7 @@
       <span
         :class="[
           'px-4 py-2 rounded-lg transition',
-          route.path.startsWith('/products')
+          currentRoute.path.startsWith('/products')
             ? 'bg-white text-blue-900' 
             : 'hover:bg-blue-800'
         ]"
@@ -82,6 +82,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AppFooter from './AppFooter.vue'
+import { useRoute } from 'vue-router'
 
+const currentRoute = useRoute()
 const searchQuery = ref('')
 </script>
