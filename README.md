@@ -4,7 +4,7 @@
 
 A modern, full-stack e-commerce platform dedicated to comic book enthusiasts and trading card game collectors. Skyscraper Comics combines sleek design with powerful functionality to deliver an exceptional shopping and reservation experience for collectors worldwide.
 
-<img src="./assets/BannerImage.png" alt="Skyscraper Comics Banner" width="400" />
+<img src="./assets/BannerImage.png" alt="Skyscraper Comics Banner" width="800" />
 
 ## 📖 Table of Contents
 
