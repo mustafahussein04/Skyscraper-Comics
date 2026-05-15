@@ -517,9 +517,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact & Support
 
-- **Email**: support@skyscrapercomics.dev *(Update email later)*
+- **Email**: skyscrapercomics1@gmail.com
 - **GitHub Issues**: [Create an Issue](https://github.com/mustafahussein04/Skyscraper-Comics/issues)
-- **Project Board**: [View JIRA Board](https://your-jira-instance.atlassian.net/)
 
 
 **Last Updated**: May 14, 2026  
