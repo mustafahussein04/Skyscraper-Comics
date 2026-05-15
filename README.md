@@ -506,6 +506,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Josh Camarillo
 - Benjamin Chisum
 - Will Pham
+- Ethan Jordan
 
 ### Course Information
 - **Course**: CSC 191 - Senior Capstone Project
