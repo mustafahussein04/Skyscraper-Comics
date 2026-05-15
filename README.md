@@ -4,7 +4,7 @@
 
 A modern, full-stack e-commerce platform dedicated to comic book enthusiasts and trading card game collectors. Skyscraper Comics combines sleek design with powerful functionality to deliver an exceptional shopping and reservation experience for collectors worldwide.
 
-![Skyscraper Comics Banner](./assets/banner.png)
+<img src="./assets/banner.png" alt="Skyscraper Comics Banner" width="400" />
 
 ## 📖 Table of Contents
 
@@ -43,17 +43,17 @@ To empower comic book and trading card collectors by providing a centralized, us
 ## 🎨 Visual Preview
 
 ### Brand Identity
-![Skyscraper Logo](./assets/SkyscraperLogo.jpg)
+<img src="./assets/SkyscraperLogo.jpg" alt="Skyscraper Logo" width="400" />
 
 ### Product & Style Imagery
-![Comic Books Visual](./assets/comic-books.jpg)
+<img src="./assets/comic-books.jpg" alt="Comic Books Visual" width="400" />
 
 ### Prototype Screens
-![Prototype Demo 1](./assets/Demo1.png)
+<img src="./assets/Demo1.png" alt="Prototype Demo 1" width="400" />
 
-![Prototype Demo 2](./assets/Demo2.png)
+<img src="./assets/Demo2.png" alt="Prototype Demo 2" width="400" />
 
-![Prototype Demo 3](./assets/Demo3.png)
+<img src="./assets/Demo3.png" alt="Prototype Demo 3" width="400" />
 
 ---
 
