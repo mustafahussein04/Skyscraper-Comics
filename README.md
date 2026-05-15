@@ -1,8 +1,8 @@
 # 🏢 Skyscraper Comics
 
-> **Your Desrired Destination for Comic Books & Trading Card Products**
+> **Your Desired Destination for Comic Books & Trading Card Products**
 
-A modern, full-stack e-commerce platform dedicated to comic book enthusiasts and trading card game collectors. Skyscraper Comics combines sleek design with powerful functionality to deliver an exceptional shopping experience for collectors worldwide.
+A modern, full-stack e-commerce platform dedicated to comic book enthusiasts and trading card game collectors. Skyscraper Comics combines sleek design with powerful functionality to deliver an exceptional shopping and reservation experience for collectors worldwide.
 
 ![Skyscraper Comics Banner](./assets/banner.png)
 
@@ -26,26 +26,24 @@ A modern, full-stack e-commerce platform dedicated to comic book enthusiasts and
 
 ## 🎯 Project Overview
 
-Skyscraper Comics is a senior capstone project (CSC 191) designed to create an intuitive, feature-rich platform for buying and selling comic books and trading card products. The platform caters to both casual collectors and serious enthusiasts, providing a seamless browsing, purchasing, and inventory management experience.
+Skyscraper Comics is a senior capstone project (CSC 191) designed to create an intuitive, feature-rich platform for reserving and buying comic books and trading card products. The platform caters to both casual collectors and serious enthusiasts, providing a seamless browsing and purchasing experience.
 
 ### Mission
 
-To empower comic book and trading card collectors by providing a centralized, user-friendly marketplace that celebrates the culture of collecting while delivering exceptional value and service.
+To empower comic book and trading card collectors by providing a centralized, user-friendly platform that celebrates the culture of collecting while delivering exceptional value and service.
 
 ### Key Focus Areas
 
 - **User Experience**: Clean, responsive interface optimized for desktop and mobile
 - **Product Discovery**: Advanced filtering, search, and recommendation systems
-- **Collector Community**: Features designed for enthusiasts to connect and trade
 - **Admin Dashboard**: Comprehensive management tools for inventory and sales
-- **Scalability**: Built with modern technologies for future growth
 
 ---
 
 ## 🎨 Visual Preview
 
 ### Brand Identity
-![Skyscraper Logo](./assets/Skyscraper Logo.jpg)
+![Skyscraper Logo](./assets/SkyscraperLogo.jpg)
 
 ### Product & Style Imagery
 ![Comic Books Visual](./assets/comic-books.jpg)
@@ -67,7 +65,7 @@ To empower comic book and trading card collectors by providing a centralized, us
 - **Advanced Search & Filtering**: Find products by title, series, condition, price, and more
 - **Product Details**: High-resolution images, ratings, reviews, and inventory status
 - **Shopping Cart**: Persistent cart with real-time updates
-- **Order History**: Track past purchases and favorites
+- **Reservation System**: Reserve products for pickup
 - **Responsive Design**: Seamless experience across all devices
 
 ### 👨‍💼 Admin Features
@@ -75,7 +73,6 @@ To empower comic book and trading card collectors by providing a centralized, us
 - **Inventory Management**: Add, edit, and delete products
 - **Dashboard Analytics**: Sales metrics, revenue trends, and inventory insights
 - **Order Management**: Process and track customer orders
-- **User Management**: Manage user accounts and permissions
 - **Category Management**: Organize products by type and series
 
 ### 🎨 Design Features
@@ -129,8 +126,8 @@ To empower comic book and trading card collectors by providing a centralized, us
 
 ### Phase 2: Core Features (Weeks 4-7)
 - [ ] Product catalog implementation
-- [ ] User authentication system
 - [ ] Shopping cart functionality
+- [ ] Reservation system
 - [ ] Payment integration (placeholder)
 
 ### Phase 3: Admin & Analytics (Weeks 8-10)
@@ -215,8 +212,7 @@ frontend/
 │   ├── views/              # Page-level components
 │   │   ├── Admin.vue       # Admin dashboard
 │   │   ├── HomePage.vue    # Landing page
-│   │   ├── Products.vue    # Product listing
-│   │   └── Auth/           # Authentication pages
+│   │   └── Products.vue    # Product listing
 │   ├── router/             # Vue Router configuration
 │   ├── types/              # TypeScript interfaces
 │   ├── composables/        # Reusable logic

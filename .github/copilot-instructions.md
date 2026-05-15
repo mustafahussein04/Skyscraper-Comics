@@ -43,7 +43,6 @@ frontend/src/
 ├── views/              # Page-level components (routed by router)
 │   ├── HomePage.vue
 │   ├── Ecommerce.vue
-│   ├── Auth/           # Authentication pages
 │   ├── Chart/          # Chart showcase pages
 │   ├── Errors/         # Error pages
 │   ├── Forms/          # Form demo pages
