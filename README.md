@@ -118,32 +118,33 @@ To empower comic book and trading card collectors by providing a centralized, us
   <img src="./assets/JIRA2.png" alt="JIRA Progress #2" width="520" />
 </div>
 
-### Phase 1: Foundation (Weeks 1-3)
+### Phase 1: Foundation
 - [ ] Project setup and architecture design
 - [ ] Frontend scaffolding and component library
 - [ ] Database schema design
 - [ ] API specification
 
-### Phase 2: Core Features (Weeks 4-7)
+### Phase 2: Core Features
 - [ ] Product catalog implementation
 - [ ] Shopping cart functionality
 - [ ] Reservation system
 
-### Phase 3: Admin & Analytics (Weeks 8-10)
+### Phase 3: Admin & Analytics
 - [ ] Admin dashboard development
 - [ ] Analytics and reporting
 - [ ] Inventory management
-- [ ] Order processing system
+- [ ] Order/Reservation processing system
 
-### Phase 4: Optimization & Launch (Weeks 11-12)
+### Phase 4: Optimization & Launch
 - [ ] Performance optimization
-- [ ] Security audit
-- [ ] User acceptance testing
+- [ ] Security verification
+- [ ] User testing
 - [ ] Production deployment
 
 ### Upcoming Milestones
 - Working search bar with valid results
 - Community features (reviews and possible wishlists)
+- Continued maintenance
 
 ---
 
