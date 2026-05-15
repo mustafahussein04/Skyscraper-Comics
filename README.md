@@ -128,7 +128,6 @@ To empower comic book and trading card collectors by providing a centralized, us
 - [ ] Product catalog implementation
 - [ ] Shopping cart functionality
 - [ ] Reservation system
-- [ ] Payment integration (placeholder)
 
 ### Phase 3: Admin & Analytics (Weeks 8-10)
 - [ ] Admin dashboard development
@@ -143,9 +142,8 @@ To empower comic book and trading card collectors by providing a centralized, us
 - [ ] Production deployment
 
 ### Upcoming Milestones
-- **Sprint 4**: Enhanced search and recommendation engine
-- **Sprint 5**: Mobile app considerations
-- **Sprint 6**: Community features (reviews, wishlists)
+- Working search bar with valid results
+- Community features (reviews and possible wishlists)
 
 ---
 
@@ -335,21 +333,12 @@ npm run test:e2e
 
 ### Testing Checklist
 
-- [ ] Unit tests for business logic
+- [ ] Unit tests for new features
 - [ ] Component tests for Vue components
 - [ ] Integration tests for workflows
 - [ ] E2E tests for critical user paths
-- [ ] Coverage target: 80%+ for core features
-- [ ] Accessibility testing (axe-core)
+- [ ] Accessibility testing (different devices)
 - [ ] Performance testing
-
-### Test Best Practices
-
-1. Write tests alongside features
-2. Test user behavior, not implementation
-3. Keep tests focused and isolated
-4. Use descriptive test names
-5. Mock external dependencies
 
 ---
 
