@@ -9,7 +9,7 @@
           Discover your next interests in comic books or your favorite trading card game.
         </p>
         <div class="flex gap-4">
-          <a href="/products" class="bg-white text-blue-900 font-semibold px-6 py-3 rounded hover:bg-gray-100 transition-colors">Shop Products</a>
+          <a href="/products/comics" class="bg-white text-blue-900 font-semibold px-6 py-3 rounded hover:bg-gray-100 transition-colors">Shop Products</a>
           <a href="/events" class="border border-white px-6 py-3 rounded hover:bg-white hover:text-blue-900 transition-colors">View Events</a>
         </div>
       </div>
@@ -30,7 +30,7 @@
             From the latest Marvel and DC releases to rare back issues, from Magic: The Gathering
             booster packs to Yu-Gi-Oh! singles — we supply it all.
           </p>
-          <a href="/products" class="inline-block bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800 transition-colors font-semibold">
+          <a href="/products/comics" class="inline-block bg-blue-900 text-white px-6 py-3 rounded hover:bg-blue-800 transition-colors font-semibold">
             Browse Our Collection
           </a>
         </div>
@@ -111,7 +111,7 @@
   <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
-    <RouterLink to="/products" class="group">
+    <RouterLink to="/products/comics" class="group">
       <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
         <img
           src="/images/logo/comic-books.jpg"
@@ -128,7 +128,7 @@
       </div>
     </RouterLink>
 
-    <RouterLink to="/products" class="group">
+    <RouterLink to="/products/tcg" class="group">
       <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
         <img
           src="/images/logo/trading-cards.jpg"
