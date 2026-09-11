@@ -159,6 +159,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/admin/login',
+      name: 'Admin Login',
+      component: () => import('../views/Admin.vue'),
+      meta: {
+        title: 'Admin Sign In',
+      },
+    },
+    {
       path: '/signup',
       name: 'Signup',
       component: () => import('../views/Auth/Signup.vue'),
