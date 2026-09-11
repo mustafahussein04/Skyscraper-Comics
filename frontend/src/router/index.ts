@@ -27,17 +27,11 @@ const router = createRouter({
           },
         },
         {
-          path: 'products/comics',
-          name: 'Comics',
+          path: 'products/:filter?',
+          name: 'Products',
           component: () => import('../views/ProductsView.vue'),
-          props: { type: 'comics' }
+          props: {}
         },
-        {
-          path: 'products/tcg',
-          name: 'TCG',
-          component: () => import('../views/ProductsView.vue'),
-          props: { type: 'tcg' }
-        }
       ],
     },
     {
