@@ -61,7 +61,7 @@
       </span>
     </RouterLink>
     <RouterLink
-      to="/admin"
+      to="/admin/login"
       class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900 text-white transition"
     >
       Admin Sign In
