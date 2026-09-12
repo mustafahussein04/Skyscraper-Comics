@@ -33,6 +33,10 @@
             Sign in with your administrator credentials. This area is for authorized staff only.
           </p>
 
+          <p class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            Demo access: enter any valid email and a non-empty password.
+          </p>
+
           <form @submit.prevent="handleLogin" class="space-y-5">
             <div>
               <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
@@ -69,13 +73,6 @@
               Sign in to Admin Portal
             </button>
 
-            <p
-              v-if="formMessage"
-              role="status"
-              class="rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800"
-            >
-              {{ formMessage }}
-            </p>
           </form>
         </div>
       </section>
@@ -89,12 +86,20 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { signInAdmin } from '@/composables/useAdminAuth'
+
+defineOptions({ name: 'AdminLogin' })
 
 const email = ref('')
 const password = ref('')
-const formMessage = ref('')
+const route = useRoute()
+const router = useRouter()
 
-const handleLogin = () => {
-  formMessage.value = 'Admin authentication will be available when the backend is connected.'
+const handleLogin = async () => {
+  signInAdmin()
+  const requestedRoute = typeof route.query.redirect === 'string' ? route.query.redirect : '/admin'
+  const destination = requestedRoute.startsWith('/admin') ? requestedRoute : '/admin'
+  await router.replace(destination)
 }
 </script>
