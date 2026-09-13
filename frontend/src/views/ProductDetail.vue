@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-5xl mx-auto px-6 py-8">
-    <PageBreadcrumb :pageTitle="product?.name ?? 'Product'" :showTitle="false" />
+    <PageBreadcrumb :pageTitle="product?.name ?? 'Product'" :showTitle="false" :parentCrumbs="[{ label: 'Products', to: '/products' }]" />
 
     <div v-if="product" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
       <!-- Left: Product Image -->
