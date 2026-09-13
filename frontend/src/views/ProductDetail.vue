@@ -17,7 +17,12 @@
         <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
         <p class="text-2xl font-semibold text-gray-800">${{ product.price.toFixed(2) }}</p>
         <p class="text-base text-gray-500 leading-relaxed mt-4">{{ product.description }}</p>
-        <span class="inline-block bg-gray-700 text-white px-3 py-1 rounded-full text-sm mt-4">{{ product.category }}</span>
+        <div class="flex items-center gap-2 mt-4">
+          <span :class="['inline-block px-3 py-1 rounded-full text-sm', product.inStock ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900']">
+            {{ product.inStock ? 'In Stock' : 'Out of Stock' }}
+          </span>
+          <span class="inline-block bg-gray-700 text-white px-3 py-1 rounded-full text-sm">{{ product.category }}</span>
+        </div>
       </div>
     </div>
 
