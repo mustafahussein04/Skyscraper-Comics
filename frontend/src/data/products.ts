@@ -12,7 +12,7 @@ export const products: Product[] = [
   {
     id: 1,
     name: 'Amazing Spider-Man #1',
-    image: '/images/products/placeholder.jpg',
+    image: 'https://cdn.marvel.com/u/prod/marvel/i/mg/d/40/5196582d03800/detail.webp',
     price: 9.99,
     description: 'The debut issue of the Amazing Spider-Man series.',
     category: 'Comic Books',
@@ -21,7 +21,7 @@ export const products: Product[] = [
   {
     id: 2,
     name: 'Batman: Year One',
-    image: '/images/products/placeholder.jpg',
+    image: 'https://cdn.marvel.com/u/prod/marvel/i/mg/d/40/5196582d03800/detail.webp',
     price: 14.99,
     description: 'Frank Miller\'s iconic origin story of Batman.',
     category: 'Comic Books',
@@ -30,7 +30,7 @@ export const products: Product[] = [
   {
     id: 3,
     name: 'Magic: The Gathering Booster Pack',
-    image: '/images/products/placeholder.jpg',
+    image: 'https://cdn.marvel.com/u/prod/marvel/i/mg/d/40/5196582d03800/detail.webp',
     price: 4.99,
     description: 'A random booster pack from the latest set.',
     category: 'Trading Cards',
