@@ -234,11 +234,15 @@ const handleDateClick = (info: any) => {
 const calendarOptions = computed (() =>({
   plugins: [dayGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
+  /*
+  Overrides the default header toolbar to center the title and move the navigation buttons to the left and right.
+  Leftover styling behavior from the default header toolbar causes the right arrow to have a grey background. Default header toolbar looks better (not obiously bugged) so will keep until fixed.
   headerToolbar: {
-    left: '',
+    left: 'prev',
     center: 'title',
-    right: '',
+    right: 'next',
   },
+  */
   contentHeight: 680,
   dateClick: handleDateClick,
   events: filteredEvents.value,
@@ -261,6 +265,8 @@ const sidebarEvents: { day: string; month: string; title: string; time: string; 
   font-weight: 700;
 }
 
+/*
+Makes "today" button in default header toobar white (against white background) so will be commented out until default is changed"
 :deep(.fc-button) {
   background: transparent !important;
   border: none !important;
@@ -269,6 +275,7 @@ const sidebarEvents: { day: string; month: string; title: string; time: string; 
   font-size: 1.1rem;
   padding: 4px 10px !important;
 }
+*/
 
 :deep(.fc-button:hover) {
   background: rgba(255, 255, 255, 0.15) !important;
