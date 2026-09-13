@@ -80,7 +80,10 @@
         </div>
 
         <!-- Products Grid -->
-         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
+         <div v-if="filteredProducts.length==0" class="text-left text-black-500">
+            No products found.
+        </div>
+         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
             <ProductCard 
                 v-for="Product in filteredProducts"
                 :key="Product.id"
