@@ -37,12 +37,12 @@ const router = createRouter({
       ],
     },
         {
-      path: '/products',
-      name: 'Products',
-      component: () => import('../views/ProductsView.vue'),
-      meta: {
-        title: 'Our Products',
-      }
+          path: 'products/:filter?',
+          name: 'Products',
+          component: () => import('../views/ProductsView.vue'),
+          props: {}
+        },
+      ],
     },
     {
       path: '/calendar',
@@ -160,6 +160,14 @@ const router = createRouter({
       component: () => import('../views/Auth/Signin.vue'),
       meta: {
         title: 'Signin',
+      },
+    },
+    {
+      path: '/admin/login',
+      name: 'Admin Login',
+      component: () => import('../views/Admin.vue'),
+      meta: {
+        title: 'Admin Sign In',
       },
     },
     {

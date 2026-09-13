@@ -4,7 +4,7 @@
    <nav class="bg-gradient-to-r from-blue-900 to-violet-700 text-white px-6 py-4 flex justify-between items-center">
   <a href="/" class="font-bold text-xl flex items-center gap-2">
     Skyscraper Comics
-    <img src="/images/logo/Skyscraper_Logo.png" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
+    <img src="/images/logo/Skyscraper Logo.jpg" alt="Skyscraper Comics Logo" class="h-8 w-auto" />
   </a>
 
 
@@ -24,23 +24,23 @@
       </div>
 
       <div class="flex gap-6 items-center">
-    <RouterLink to="/" v-slot="{isExactActive}">
+    <RouterLink to="/" v-slot="{isActive}">
       <span
         :class="[
           'px-4 py-2 rounded-lg transition',
-          isExactActive 
-            ? 'bg-white text-blue-900'
+          isActive 
+            ? 'bg-white text-blue-900' 
             : 'hover:bg-blue-800'
         ]"
       >
       Home
       </span>
     </RouterLink>
-    <RouterLink to="/products" v-slot="{route}">
+    <RouterLink to="/products" v-slot="{isActive}">
       <span
         :class="[
           'px-4 py-2 rounded-lg transition',
-          currentRoute.path.startsWith('/products')
+          isActive 
             ? 'bg-white text-blue-900' 
             : 'hover:bg-blue-800'
         ]"
@@ -61,7 +61,7 @@
       </span>
     </RouterLink>
     <RouterLink
-      to="/admin/login"
+      to="/admin"
       class="border border-white px-3 py-1 rounded hover:bg-white hover:text-blue-900 text-white transition"
     >
       Admin Sign In
@@ -81,9 +81,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import AppFooter from './AppFooter.vue'
-import { useRoute } from 'vue-router'
+import AppFooter from '../AppFooter.vue'
 
-const currentRoute = useRoute()
 const searchQuery = ref('')
 </script>
