@@ -28,17 +28,21 @@ const router = createRouter({
           },
         },
         {
-          path: 'products/comics',
-          name: 'Comics',
-          component: () => import('../views/ProductsView.vue'),
-          props: { type: 'comics' }
+          path: 'products/:id',
+          name: 'ProductDetail',
+          component: () => import('../views/ProductDetail.vue'),
+          meta: {
+            title: 'Product Detail',
+          },
         },
+      ],
+    },
         {
-          path: 'products/tcg',
-          name: 'TCG',
+          path: 'products/:filter?',
+          name: 'Products',
           component: () => import('../views/ProductsView.vue'),
-          props: { type: 'tcg' }
-        }
+          props: {}
+        },
       ],
     },
     {
