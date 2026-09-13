@@ -37,13 +37,11 @@ const router = createRouter({
         },
       ],
     },
-        {
-          path: 'products/:filter?',
-          name: 'Products',
-          component: () => import('../views/ProductsView.vue'),
-          props: {}
-        },
-      ],
+    {
+      path: '/products/:filter?',
+      name: 'Products',
+      component: () => import('../views/ProductsView.vue'),
+      props: {},
     },
     {
       path: '/calendar',
