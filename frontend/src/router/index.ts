@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -171,6 +172,61 @@ const router = createRouter({
       },
     },
     {
+      path: '/admin',
+      component: () => import('../components/admin/AdminDashboardLayout.vue'),
+      meta: {
+        requiresAdmin: true,
+      },
+      children: [
+        {
+          path: '',
+          name: 'Admin Dashboard',
+          component: () => import('../views/admin/AdminDashboardHome.vue'),
+          meta: { title: 'Dashboard' },
+        },
+        {
+          path: 'products',
+          name: 'Admin Products',
+          component: () => import('../views/admin/AdminSectionPage.vue'),
+          props: {
+            title: 'Products',
+            description: 'Manage the comic book and trading card catalog from this area.',
+          },
+          meta: { title: 'Products' },
+        },
+        {
+          path: 'orders',
+          name: 'Admin Orders',
+          component: () => import('../views/admin/AdminSectionPage.vue'),
+          props: {
+            title: 'Orders',
+            description: 'Review and manage customer orders from this area.',
+          },
+          meta: { title: 'Orders' },
+        },
+        {
+          path: 'events',
+          name: 'Admin Events',
+          component: () => import('../views/admin/AdminSectionPage.vue'),
+          props: {
+            title: 'Events',
+            description: 'Create and maintain store events from this area.',
+          },
+          meta: { title: 'Events' },
+        },
+        {
+          path: 'customers',
+          name: 'Admin Customers',
+          component: () => import('../views/admin/AdminSectionPage.vue'),
+          props: {
+            title: 'Customers',
+            description: 'View customer information and support workflows from this area.',
+          },
+          meta: { title: 'Customers' },
+        },
+      ],
+    },
+    {
       path: '/signup',
       name: 'Signup',
       component: () => import('../views/Auth/Signup.vue'),
@@ -183,7 +239,20 @@ const router = createRouter({
 
 export default router
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
-  next()
+
+  const authenticated = isAdminAuthenticated()
+  const requiresAdmin = to.matched.some((routeRecord) => routeRecord.meta.requiresAdmin)
+
+  if (requiresAdmin && !authenticated) {
+    return {
+      name: 'Admin Login',
+      query: { redirect: to.fullPath },
+    }
+  }
+
+  if (to.name === 'Admin Login' && authenticated) {
+    return { name: 'Admin Dashboard' }
+  }
 })
