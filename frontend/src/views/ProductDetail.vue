@@ -15,6 +15,7 @@
       <!-- Right: Product Details -->
       <div>
         <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
+        <p class="text-2xl font-semibold text-gray-800">${{ product.price.toFixed(2) }}</p>
       </div>
     </div>
 
