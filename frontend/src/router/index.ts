@@ -26,6 +26,14 @@ const router = createRouter({
             title: 'Events',
           },
         },
+        {
+          path: 'products/:id',
+          name: 'ProductDetail',
+          component: () => import('../views/ProductDetail.vue'),
+          meta: {
+            title: 'Product Detail',
+          },
+        },
       ],
     },
         {
