@@ -183,11 +183,11 @@ const events = [
 const categories = [
   {
     name: 'Tournament',
-    color: '#ff0000',
+    color: '#b91c1c',
   },
   {
     name: 'Casual Play',
-    color: '#00ff00',
+    color: '#15803d',
   }
 ]
 
@@ -217,9 +217,12 @@ const filteredEvents = computed(() => {
   }))
 })
 
-const selectedDayEvents = computed(() =>
-  selectedDate.value ? events.filter(e => e.start === selectedDate.value && selectedCategories.value.includes(e.extendedProps.category)) : []
-)
+const selectedDayEvents = computed(() => {
+  if (!selectedDate.value) return []
+  const matchingEvents = events.filter(e => e.start === selectedDate.value)
+  if (selectedCategories.value.length === 0) return matchingEvents
+  return matchingEvents.filter(e => selectedCategories.value.includes(e.extendedProps.category))
+})
 
 const formattedSelectedDate = computed(() => {
   if (!selectedDate.value) return ''
