@@ -30,15 +30,15 @@
                             :class="[
                                 'px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap',
                                 (selectedFilter as string).toLowerCase() === filter.toLowerCase()
-                                ? 'bg-blue-900 text-white shadow-md' 
+                                ? 'bg-blue-900 text-white shadow-md'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                
+
                             ]"
                             >{{ filter }}</button>
                     </div>
                 </div>
                 <!-- code from Google Gemini, as well as the following `:key="selectedFilter" -->
-                <div 
+                <div
                     :class="[
                         'grid transition-all ease-in-out',
                         selectedFilter === 'All' ? 'grid-rows-[0fr] opacity-0 duration-200' : 'grid-rows-[1fr] opacity-100 duration-500'
@@ -62,13 +62,13 @@
                                     @click="selectedSubFilter = filter"
                                     :class="[
                                         'px-4 py-2 rounded-lg transition-all duration-200 ease-in-out whitespace-nowrap',
-                                        (selectedSubFilter as string).toLowerCase() === 
+                                        (selectedSubFilter as string).toLowerCase() ===
                                             filter
                                             .toLowerCase()
                                             .normalize('NFD')                  // Code provided by Google Gemini
                                             .replace(/[\u0300-\u036f]/g, ''    // Code provided by Google Gemini
                                         )
-                                        ? 'bg-blue-900 text-white shadow-md' 
+                                        ? 'bg-blue-900 text-white shadow-md'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     ]"
                                 >{{ filter }}</button>
@@ -80,8 +80,11 @@
         </div>
 
         <!-- Products Grid -->
-         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
-            <ProductCard 
+         <div v-if="filteredProducts.length==0" class="text-left text-black">
+            No products found.
+        </div>
+         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
+            <ProductCard
                 v-for="Product in filteredProducts"
                 :key="Product.id"
                 :product="Product" />
