@@ -111,7 +111,7 @@
   <h2 class="text-3xl font-bold text-center mb-10">Featured Categories</h2>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
-    <RouterLink to="/products" class="group">
+    <RouterLink to="/products/comics" class="group">
       <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
         <img
           src="/images/logo/comic-books.jpg"
@@ -128,7 +128,7 @@
       </div>
     </RouterLink>
 
-    <RouterLink to="/products" class="group">
+    <RouterLink to="/products/tcg" class="group">
       <div class="relative h-72 rounded-2xl overflow-hidden shadow-md">
         <img
           src="/images/logo/trading-cards.jpg"
