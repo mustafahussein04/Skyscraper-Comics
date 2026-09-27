@@ -71,7 +71,7 @@
                         required
                     ></textarea>
                 </div>
-                <div>
+                <div class="flex justify-end gap-4">
                     <button
                         @click="closeModal"
                         class="bg-gray-400 text-white px-5 py-2 rounded-lg hover:bg-gray-800"
@@ -96,7 +96,7 @@ import { ref } from 'vue';
 import type { Product } from '../../types/product'; 
 
 const props = defineProps<{
-  product: Product
+    product: Product
 }>();
 
 const isOpen = ref(false);
@@ -111,13 +111,13 @@ const closeModal = () => {
 
 
 const emit = defineEmits<{
-  (e: 'save', updatedProduct: Product): void
+    (e: 'save', updatedProduct: Product): void
 }>();
 
 const form = ref<Product>({ ...props.product });
 
 const handleSubmit = () => {
-  emit('save', form.value);
-  closeModal();
+    emit('save', form.value);
+    closeModal();
 };
 </script>
