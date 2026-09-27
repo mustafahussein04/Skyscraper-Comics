@@ -1,8 +1,22 @@
 <template>
     <div class="container mx-auto px-4 py-12">
         <!-- Page Header -->
-        <h1 class="text-4xl font-bold mb-2">Our Products</h1>
-        <p class="text-gray-600 mb-8">Browse our extensive collection of comics and trading card games.</p>
+        <div class="mb-8 flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-4xl font-bold mb-2">Our Products</h1>
+            <p class="text-gray-600">
+            Browse our extensive collection of comics and trading card games.
+            </p>
+        </div>
+
+        <RouterLink
+            v-if="adminAuthenticated"
+            :to="{ name: 'Admin Products' }"
+            class="rounded-lg bg-blue-900 px-4 py-2 font-medium text-white transition hover:bg-blue-800"
+        >
+            Manage Products
+        </RouterLink>
+        </div>
 
         <!-- Search Bar and Filters -->
         <div class="mb-8 bg-white rounded-lg shadow-sm">
@@ -98,11 +112,13 @@ import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 
 const route = useRoute()
 const router = useRouter()
 
 const searchQuery = ref('')
+const adminAuthenticated = isAdminAuthenticated()
 const selectedFilter = ref(route.params.filter || 'All')
 watch(() => selectedFilter.value, (newFilter) => {
     if (newFilter === 'All') {
