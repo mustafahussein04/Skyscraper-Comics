@@ -23,21 +23,153 @@
                 </button>
             </div>
         </div>
-        
+
+        <form class="p-6" @submit.prevent="submitReservation">
+          <!-- Product information -->
+          <div class="mb-6 rounded-lg border border-blue-300 bg-blue-50 p-4">
+            <h3 class="text-lg font-bold">
+              {{ product.name }}
+            </h3>
+
+            <p class="text-2xl font-bold text-blue-900">
+              ${{ product.price.toFixed(2) }}
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <label for="firstName" class="mb-1 block font-medium text-gray-700">
+              First Name
+            </label>
+
+            <input
+              id="firstName"
+              v-model.trim="reservation.firstName"
+              type="text"
+              placeholder="John"
+              required
+              class="w-full rounded-lg border border-gray-300 px-4 py-3
+                     outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+            >
+          </div>
+
+          <div class="mb-4">
+            <label for="lastName" class="mb-1 block font-medium text-gray-700">
+              Last Name
+            </label>
+
+            <input
+              id="lastName"
+              v-model.trim="reservation.lastName"
+              type="text"
+              placeholder="Doe"
+              required
+              class="w-full rounded-lg border border-gray-300 px-4 py-3
+                     outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+            >
+          </div>
+
+          <div class="mb-4">
+            <label for="phoneNumber" class="mb-1 block font-medium text-gray-700">
+              Phone Number
+            </label>
+
+            <input
+              id="phoneNumber"
+              v-model.trim="reservation.phoneNumber"
+              type="tel"
+              placeholder="(555) 123-4567"
+              required
+              class="w-full rounded-lg border border-gray-300 px-4 py-3
+                     outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-200"
+            >
+          </div>
+
+          <div class="mb-4 rounded-lg border bg-gray-50 p-3 text-sm text-gray-600">
+            <p class="font-bold">Pickup Information:</p>
+            <p>
+              We will hold your item for 48 hours. You’ll receive confirmation
+              once your reservation is ready for pickup at our store.
+            </p>
+          </div>
+
+          <p
+            v-if="reservationSubmitted"
+            class="mb-4 rounded-lg bg-green-100 p-3 text-green-900"
+          >
+            Your reservation has been submitted!
+          </p>
+
+          <button
+            type="submit"
+            class="w-full rounded-lg bg-blue-900 px-4 py-3 font-bold text-white
+                   hover:bg-blue-800"
+          >
+            Confirm Reservation
+          </button>
+        </form>
+      </div>
     </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
+import { reactive, ref } from 'vue'
 import type { Product } from '@/types/product'
 
-defineProps<{
+const props = defineProps<{
   product: Product
 }>()
 
+const emit = defineEmits<{
+  reserved: [
+    reservation: {
+      product: Product
+      firstName: string
+      lastName: string
+      phoneNumber: string
+    }
+  ]
+}>()
+
+const showReservationForm = ref(false)
+const reservationSubmitted = ref(false)
+
+const reservation = reactive({
+  firstName: '',
+  lastName: '',
+  phoneNumber: ''
+})
+
+const openReservationForm = () => {
+  if (props.product.stock > 0) {
+    reservationSubmitted.value = false
+    showReservationForm.value = true
+  }
+}
+
+const closeReservationForm = () => {
+  showReservationForm.value = false
+}
+
+const submitReservation = () => {
+  emit('reserved', {
+    product: props.product,
+    firstName: reservation.firstName,
+    lastName: reservation.lastName,
+    phoneNumber: reservation.phoneNumber
+  })
+
+  reservationSubmitted.value = true
+
+  reservation.firstName = ''
+  reservation.lastName = ''
+  reservation.phoneNumber = ''
+}
+
 const getStockColor = (stock: number) => {
-  if (stock === 0) return 'bg-red-100 text-red-900';
-  if (stock < 5) return 'bg-yellow-100 text-yellow-900';
-  return 'bg-green-100 text-green-900';
+  if (stock === 0) return 'bg-red-100 text-red-900'
+  if (stock < 5) return 'bg-yellow-100 text-yellow-900'
+  return 'bg-green-100 text-green-900'
 }
 
 const getStockLabel = (stock: number) => {
@@ -46,8 +178,8 @@ const getStockLabel = (stock: number) => {
   return `In Stock: ${stock}`
 }
 
-const getBrandLabel = (brand: string) => {  // looks for products with brand: 'Pokemon' or whichever brand is selected otherwise
-    if (brand === 'Pokemon') return 'Pokémon'
-    return brand
+const getBrandLabel = (brand: string) => {
+  if (brand === 'Pokemon') return 'Pokémon'
+  return brand
 }
 </script>
