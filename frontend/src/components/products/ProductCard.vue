@@ -16,6 +16,7 @@
             <div class="flex items-center justify-between">
                 <p class="text-2xl font-bold">${{ product.price.toFixed(2) }}</p>
                 <button
+                    @click="$emit('reserve', product)"
                     :disabled="product.stock === 0"
                     class="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300"
                 >
@@ -120,51 +121,9 @@ const props = defineProps<{
   product: Product
 }>()
 
-const emit = defineEmits<{
-  reserved: [
-    reservation: {
-      product: Product
-      firstName: string
-      lastName: string
-      phoneNumber: string
-    }
-  ]
+defineEmits<{
+  reserve: [product: Product]
 }>()
-
-const showReservationForm = ref(false)
-const reservationSubmitted = ref(false)
-
-const reservation = reactive({
-  firstName: '',
-  lastName: '',
-  phoneNumber: ''
-})
-
-const openReservationForm = () => {
-  if (props.product.stock > 0) {
-    reservationSubmitted.value = false
-    showReservationForm.value = true
-  }
-}
-
-const closeReservationForm = () => {
-  showReservationForm.value = false
-}
-
-const submitReservation = () => {
-  emit('reserved', {
-    product: props.product,
-    firstName: reservation.firstName,
-    lastName: reservation.lastName,
-    phoneNumber: reservation.phoneNumber
-  })
-
-  reservationSubmitted.value = true
-
-  reservation.firstName = ''
-  reservation.lastName = ''
-  reservation.phoneNumber = ''
-}
 
 const getStockColor = (stock: number) => {
   if (stock === 0) return 'bg-red-100 text-red-900'
