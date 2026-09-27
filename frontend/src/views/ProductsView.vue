@@ -26,6 +26,21 @@
         <h1 class="text-4xl font-bold mb-2">Our Products</h1>
         <p class="text-gray-600 mb-8">Browse our extensive collection of comics and trading card games.</p>
 
+        <p
+            v-if="reservationMessage"
+            role="status"
+            class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-900"
+        >
+            {{ reservationMessage }}
+        </p>
+        <p
+            v-if="reservationError"
+            role="alert"
+            class="mb-6 rounded-lg bg-red-100 px-4 py-3 text-red-900"
+        >
+            {{ reservationError }}
+        </p>
+
         <!-- Search Bar and Filters -->
         <div class="mb-8 bg-white px-6 py-4 rounded-lg shadow-sm flex flex-col flex-row items-center gap-4">
             <!-- Search Bar -->
@@ -64,7 +79,9 @@
             <ProductCard 
                 v-for="Product in filteredProducts"
                 :key="Product.id"
-                :product="Product" />
+                :product="Product"
+                @reserve="handleReserve"
+            />
         </div>
     </div>
 </template>
@@ -74,6 +91,11 @@ import { ref, computed } from 'vue'
 import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
+import {
+    getCurrentUserEmail,
+    getProductStock,
+    reserveProduct,
+} from '@/composables/useReservations'
 
 const showBanner = ref(true)
 
@@ -89,8 +111,17 @@ const currentFilters = computed(() => {
   return props.type === 'comics' ? comicsFilters : tcgFilters
 })
 
+const productList = ref<Product[]>(
+    products.map((product) => ({
+        ...product,
+        stock: getProductStock(product),
+    })),
+)
+const reservationMessage = ref('')
+const reservationError = ref('')
+
 const filteredProducts = computed(() => {
-    return products.filter((p: Product) => {
+    return productList.value.filter((p: Product) => {
         const matchesType = p.type === props.type
         const matchesBrand = selectedFilter.value === 'All' || p.brand === selectedFilter.value
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -99,5 +130,21 @@ const filteredProducts = computed(() => {
         return matchesType && matchesBrand && matchesSearch
     })
 })
+
+const handleReserve = (product: Product) => {
+    reservationMessage.value = ''
+    reservationError.value = ''
+
+    const result = reserveProduct(product, getCurrentUserEmail())
+
+    if (!result.success) {
+        reservationError.value = result.message
+        product.stock = result.stock
+        return
+    }
+
+    product.stock = result.stock
+    reservationMessage.value = result.message
+}
 
 </script>
