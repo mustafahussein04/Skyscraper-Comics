@@ -1,74 +1,27 @@
 <template>
-  <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-    <img
-      :src="product.image"
-      :alt="product.name"
-      class="w-full h-64 object-cover mb-4"
-    >
-
-    <div>
-      <div class="flex items-center justify-between">
-        <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">
-          {{ getBrandLabel(product.brand) }}
-        </p>
-
-        <p
-          class="text-sm mb-1 px-2 py-1 rounded"
-          :class="getStockColor(product.stock)"
-        >
-          {{ getStockLabel(product.stock) }}
-        </p>
-      </div>
-
-      <h3 class="text-xl font-bold mb-2 line-clamp-2 h-[3em]">
-        {{ product.name }}
-      </h3>
-
-      <p class="text-sm text-gray-600 mb-2 line-clamp-2 h-[3em]">
-        {{ product.description }}
-      </p>
-
-      <div class="flex items-center justify-between">
-        <p class="text-2xl font-bold">
-          ${{ product.price.toFixed(2) }}
-        </p>
-
-        <button
-          type="button"
-          class="bg-blue-900 text-white px-5 py-2 rounded-lg hover:bg-blue-800
-                 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          :disabled="product.stock === 0"
-          @click="openReservationForm"
-        >
-          {{ product.stock === 0 ? 'Unavailable' : 'Reserve' }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Reservation popup -->
-  <Teleport to="body">
-    <div
-      v-if="showReservationForm"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      @click.self="closeReservationForm"
-    >
-      <div class="w-full max-w-md rounded-xl bg-white shadow-xl">
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b p-6">
-          <div>
-            <h2 class="text-2xl font-bold">Reserve for Pickup</h2>
-            <p class="text-gray-500">In-store pickup only</p>
-          </div>
-
-          <button
-            type="button"
-            class="text-3xl text-gray-500 hover:text-black"
-            aria-label="Close reservation form"
-            @click="closeReservationForm"
-          >
-            &times;
-          </button>
+    <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        <img :src="product.image" :alt="product.name" class="w-full h-64 object-cover mb-4">
+        <div>
+            <div class="flex items-center justify-between">
+                <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">{{ getBrandLabel(product.brand) }}</p>
+                <p class="text-sm mb-1 px-2 py-1 rounded" 
+                    :class="getStockColor(product.stock)"
+                >
+                    {{ getStockLabel(product.stock) }}
+                </p>
+                
+            </div>
+            <h3 class="text-xl font-bold mb-2 h-20px sm:h-32px md:h-48px lg:h-64px xl:h-80px line-clamp-2 h-[3em]">{{ product.name }}</h3>
+            <p class="text-sm text-gray-600 mb-2 line-clamp-2 h-[3em]">{{ product.description }}</p>
+            <div class="flex items-center justify-between">
+                <p class="text-2xl font-bold">${{ product.price.toFixed(2) }}</p>
+                <button
+                    :disabled="product.stock === 0"
+                    class="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300"
+                >
+                    {{ product.stock === 0 ? 'Sold Out' : 'Reserve' }}
+                </button>
+            </div>
         </div>
 
         <form class="p-6" @submit.prevent="submitReservation">
