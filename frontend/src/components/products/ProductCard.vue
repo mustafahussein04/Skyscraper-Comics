@@ -16,6 +16,7 @@
             <div class="flex items-center justify-between">
                 <p class="text-2xl font-bold">${{ product.price.toFixed(2) }}</p>
                 <button
+                    @click="$emit('reserve', product)"
                     :disabled="product.stock === 0"
                     class="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300"
                 >
@@ -32,6 +33,10 @@ import type { Product } from '@/types/product'
 
 defineProps<{
   product: Product
+}>()
+
+defineEmits<{
+  reserve: [product: Product]
 }>()
 
 const getStockColor = (stock: number) => {
