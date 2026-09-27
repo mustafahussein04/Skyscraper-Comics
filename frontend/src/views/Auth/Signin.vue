@@ -286,7 +286,8 @@ const togglePasswordVisibility = () => {
 }
 
 const handleSubmit = () => {
-  // Handle form submission
+  localStorage.setItem('skyscraper-comics-current-user', email.value)
+
   console.log('Form submitted', {
     email: email.value,
     password: password.value,
