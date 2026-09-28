@@ -24,11 +24,12 @@
                 </button>
             </div>
         </div>
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import type { Product } from '@/types/product'
 
 const props = defineProps<{

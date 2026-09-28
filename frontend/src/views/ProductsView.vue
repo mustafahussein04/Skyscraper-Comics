@@ -125,6 +125,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
@@ -177,11 +178,14 @@ const reservationError = ref('')
 
 const filteredProducts = computed(() => {
     return productList.value.filter((p: Product) => {
-        const matchesType = p.type === props.type
-        const matchesBrand = selectedFilter.value === 'All' || p.brand === selectedFilter.value
+        const typeFilter = (selectedFilter.value as string).toLowerCase()
+        const matchesType = typeFilter === 'all' || p.type === typeFilter
+
+        const subFilter = selectedSubFilter.value === 'Pokémon' ? 'Pokemon' : selectedSubFilter.value
+        const matchesBrand = subFilter === 'All' || p.brand === subFilter
+
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 
-        if (selectedSubFilter.value === 'Pokémon') selectedSubFilter.value = 'Pokemon'    // looks for products with brand: 'Pokemon' so that products.brand can have 'Pokemon' instead of 'Pokémon'
         return matchesType && matchesBrand && matchesSearch
     })
 })

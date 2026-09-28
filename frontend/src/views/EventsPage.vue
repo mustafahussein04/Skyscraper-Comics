@@ -128,8 +128,94 @@
           </button>
         </div>
       </div>
+
+      <!-- Admin: Manage Events button -->
+      <div v-if="isAdmin" class="mt-6 flex justify-center">
+        <button
+          type="button"
+          class="bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
+          @click="showManageModal = true"
+        >
+          Manage Events
+        </button>
+      </div>
     </div>
   </div>
+
+  <!-- Manage Events Modal -->
+  <Teleport to="body">
+    <div
+      v-if="showManageModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      @click.self="showManageModal = false"
+    >
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] flex flex-col">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+          <h2 class="text-2xl font-bold text-gray-900">Manage Events</h2>
+          <button
+            type="button"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+            @click="showManageModal = false"
+          >
+            <X class="w-6 h-6" />
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="flex-1 overflow-y-auto px-6 py-5">
+          <div class="flex items-center justify-between mb-4">
+            <p class="text-sm text-gray-500">{{ events.length }} event{{ events.length !== 1 ? 's' : '' }} total</p>
+            <button
+              type="button"
+              class="flex items-center gap-2 bg-blue-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+            >
+              <Plus class="w-4 h-4" />
+              Add Event
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <div
+              v-for="event in events"
+              :key="event.title + event.start"
+              class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
+            >
+              <div>
+                <p class="font-semibold text-gray-900">{{ event.title }}</p>
+                <p class="text-sm text-gray-500">{{ event.start }} &middot; {{ event.extendedProps.category }}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="text-sm font-medium text-blue-700 hover:text-blue-900 px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="text-sm font-medium text-red-600 hover:text-red-800 px-3 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="flex justify-end px-6 py-4 border-t border-gray-200">
+          <button
+            type="button"
+            class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            @click="showManageModal = false"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -137,8 +223,11 @@ import { ref, computed } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { Check, Clock, DollarSign, Gamepad2, Users} from 'lucide-vue-next'
+import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-next'
+import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 
+const isAdmin = isAdminAuthenticated()
+const showManageModal = ref(false)
 const selectedDate = ref<string | null>(null)
 
 const events = [
