@@ -52,6 +52,7 @@
                 type="button"
                 class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
                 :aria-label="`Edit ${event.title}`"
+                @click="editingEvent = event"
               >
                 <Pencil class="h-4 w-4" aria-hidden="true" />
                 Edit
@@ -76,6 +77,14 @@
         <p class="font-semibold text-gray-700">No upcoming events</p>
       </div>
     </div>
+
+    <!-- SCRUM-86: floating centered edit window -->
+    <AdminEventEditModal
+      v-if="editingEvent"
+      :event="editingEvent"
+      @close="editingEvent = null"
+      @save="saveEvent"
+    />
   </section>
 </template>
 
@@ -83,20 +92,33 @@
 import { computed, ref } from 'vue'
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
 import { adminEvents, type AdminEvent } from '@/data/events'
+import AdminEventEditModal from '@/components/admin/AdminEventEditModal.vue'
 
 // Local reactive copy so deletes only affect this view (refresh restores the mock data)
 const events = ref([...adminEvents])
 
-// SCRUM-84: only events that haven't happened yet
+// SCRUM-86: event currently being edited
+const editingEvent = ref<AdminEvent | null>(null)
+
+// SCRUM-84: only events that haven't happened yet, soonest first
+// (ISO dates sort chronologically as strings, and editing a date re-sorts automatically)
 const upcomingEvents = computed(() => {
   const today = new Date().toISOString().split('T')[0]
-  return events.value.filter(event => event.date >= today)
+  return events.value
+    .filter(event => event.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
 })
 
 // SCRUM-85: delete with confirmation
 const deleteEvent = (event: AdminEvent) => {
   if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
   events.value = events.value.filter(e => e.id !== event.id)
+}
+
+// SCRUM-86: write edited fields back to the list
+const saveEvent = (updated: AdminEvent) => {
+  events.value = events.value.map(e => (e.id === updated.id ? updated : e))
+  editingEvent.value = null
 }
 
 // Pretty-print the ISO date for the card view
