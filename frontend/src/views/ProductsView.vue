@@ -18,6 +18,21 @@
         </RouterLink>
         </div>
 
+        <p
+            v-if="reservationMessage"
+            role="status"
+            class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-900"
+        >
+            {{ reservationMessage }}
+        </p>
+        <p
+            v-if="reservationError"
+            role="alert"
+            class="mb-6 rounded-lg bg-red-100 px-4 py-3 text-red-900"
+        >
+            {{ reservationError }}
+        </p>
+
         <!-- Search Bar and Filters -->
         <div class="mb-8 bg-white rounded-lg shadow-sm">
             <div class="px-6 py-4 flex flex-col gap-4">
@@ -101,7 +116,9 @@
             <ProductCard
                 v-for="Product in filteredProducts"
                 :key="Product.id"
-                :product="Product" />
+                :product="Product"
+                @reserve="handleReserve"
+            />
         </div>
     </div>
 </template>
@@ -149,15 +166,40 @@ const currentSubFilters = computed(() => {
   }
 })
 
+const productList = ref<Product[]>(
+    products.map((product) => ({
+        ...product,
+        stock: getProductStock(product),
+    })),
+)
+const reservationMessage = ref('')
+const reservationError = ref('')
+
 const filteredProducts = computed(() => {
-    return products.filter((p: Product) => {
-        const matchesType = p.type === (selectedFilter.value as string).toLowerCase() || selectedFilter.value === 'All'
-        const matchesBrand = p.brand === selectedSubFilter.value || selectedSubFilter.value === 'All'
+    return productList.value.filter((p: Product) => {
+        const matchesType = p.type === props.type
+        const matchesBrand = selectedFilter.value === 'All' || p.brand === selectedFilter.value
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
 
         if (selectedSubFilter.value === 'Pokémon') selectedSubFilter.value = 'Pokemon'    // looks for products with brand: 'Pokemon' so that products.brand can have 'Pokemon' instead of 'Pokémon'
         return matchesType && matchesBrand && matchesSearch
     })
 })
+
+const handleReserve = (product: Product) => {
+    reservationMessage.value = ''
+    reservationError.value = ''
+
+    const result = reserveProduct(product, getCurrentUserEmail())
+
+    if (!result.success) {
+        reservationError.value = result.message
+        product.stock = result.stock
+        return
+    }
+
+    product.stock = result.stock
+    reservationMessage.value = result.message
+}
 
 </script>
