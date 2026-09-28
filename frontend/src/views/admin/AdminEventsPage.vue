@@ -43,10 +43,11 @@
 
           <div class="flex min-w-0 flex-1 flex-col">
             <h3 class="font-bold text-gray-900">{{ event.title }}</h3>
-            <p class="mt-1 text-sm text-gray-500">{{ event.description }}</p>
+            <p class="mt-3 text-sm text-gray-500">{{ event.description }}</p>
 
-            <div class="mt-auto flex items-center justify-end gap-2 pt-3">
-              <!-- SCRUM-84: Edit button (stubbed until SCRUM-86) -->
+            <div class="mt-auto flex items-center justify-between gap-2 pt-2">
+              <p class="text-xs font-medium text-violet-600">{{ formatEventDate(event.date) }} · {{ event.time }}</p>
+              <div class="flex items-center gap-2">
               <button
                 type="button"
                 class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
@@ -65,6 +66,7 @@
                 <Trash2 class="h-4 w-4" aria-hidden="true" />
                 Delete
               </button>
+              </div>
             </div>
           </div>
         </div>
@@ -95,5 +97,11 @@ const upcomingEvents = computed(() => {
 const deleteEvent = (event: AdminEvent) => {
   if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
   events.value = events.value.filter(e => e.id !== event.id)
+}
+
+// Pretty-print the ISO date for the card view
+const formatEventDate = (iso: string) => {
+  const date = new Date(iso + 'T00:00:00')
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 }
 </script>
