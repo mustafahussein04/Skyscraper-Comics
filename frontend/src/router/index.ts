@@ -205,11 +205,7 @@ const router = createRouter({
         {
           path: 'events',
           name: 'Admin Events',
-          component: () => import('../views/admin/AdminSectionPage.vue'),
-          props: {
-            title: 'Events',
-            description: 'Create and maintain store events from this area.',
-          },
+          component: () => import('../views/admin/AdminEventsPage.vue'),
           meta: { title: 'Events' },
         },
         {
