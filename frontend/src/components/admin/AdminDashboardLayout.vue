@@ -42,6 +42,13 @@
           <component :is="item.icon" class="h-5 w-5 shrink-0" aria-hidden="true" />
           {{ item.label }}
         </RouterLink>
+        <RouterLink
+          to="/"
+          class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-blue-100 transition hover:bg-white/10 hover:text-white"
+          @click="closeMobileMenu"
+        >
+          View Store
+        </RouterLink>
       </nav>
 
       <div class="border-t border-white/10 p-4">
