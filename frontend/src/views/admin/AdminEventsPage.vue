@@ -55,6 +55,16 @@
                 <Pencil class="h-4 w-4" aria-hidden="true" />
                 Edit
               </button>
+              <!-- SCRUM-85: Delete button with confirm -->
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                :aria-label="`Delete ${event.title}`"
+                @click="deleteEvent(event)"
+              >
+                <Trash2 class="h-4 w-4" aria-hidden="true" />
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -68,13 +78,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Pencil, Plus } from 'lucide-vue-next'
-import { adminEvents } from '@/data/events'
+import { computed, ref } from 'vue'
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
+import { adminEvents, type AdminEvent } from '@/data/events'
+
+// Local reactive copy so deletes only affect this view (refresh restores the mock data)
+const events = ref([...adminEvents])
 
 // SCRUM-84: only events that haven't happened yet
 const upcomingEvents = computed(() => {
   const today = new Date().toISOString().split('T')[0]
-  return adminEvents.filter(event => event.date >= today)
+  return events.value.filter(event => event.date >= today)
 })
+
+// SCRUM-85: delete with confirmation
+const deleteEvent = (event: AdminEvent) => {
+  if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
+  events.value = events.value.filter(e => e.id !== event.id)
+}
 </script>
