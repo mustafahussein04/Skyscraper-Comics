@@ -209,7 +209,6 @@ import { HomeIcon, UserCircleIcon } from '@/icons'
 - [Vite Docs](https://vitejs.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Vue Router](https://router.vuejs.org/)
-- [Figma Design](figma-design/figma-link.md)
 
 ## Quick Debugging Tips
 

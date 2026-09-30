@@ -129,8 +129,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
-import { useRoute, useRouter } from 'vue-router'
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
+import {
+    getCurrentUserEmail,
+    getProductStock,
+    reserveProduct,
+} from '@/composables/useReservations'
 
 const route = useRoute()
 const router = useRouter()
