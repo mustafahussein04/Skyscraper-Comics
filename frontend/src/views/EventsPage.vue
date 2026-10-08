@@ -12,7 +12,7 @@
 
       <!-- Two-column layout: calendar left, upcoming events right -->
       <div class="flex gap-8 items-start">
-      
+
         <!-- FullCalendar -->
         <div class="flex-1 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
           <FullCalendar :options="calendarOptions" />
@@ -80,7 +80,8 @@
           <!-- Upcoming Events Panel -->
           <template v-else>
             <h2 class="text-lg font-bold text-gray-900 mb-5">Upcoming Events</h2>
-            <div class="flex flex-col gap-5">
+            <p v-if="loading" class="text-sm text-gray-400">Loading…</p>
+            <div v-else class="flex flex-col gap-5">
               <div v-for="event in sidebarEvents" :key="event.title + event.day" class="flex gap-3 items-start">
                 <div class="flex-shrink-0 bg-blue-900 text-white rounded text-center w-14 py-2 leading-none">
                   <div class="text-2xl font-bold">{{ event.day }}</div>
@@ -92,6 +93,7 @@
                   <p class="text-gray-400 text-xs">{{ event.category }}</p>
                 </div>
               </div>
+              <p v-if="sidebarEvents.length === 0 && !loading" class="text-sm text-gray-400">No upcoming events.</p>
             </div>
           </template>
         </div>
@@ -165,7 +167,7 @@
         <!-- Modal body -->
         <div class="flex-1 overflow-y-auto px-6 py-5">
           <div class="flex items-center justify-between mb-4">
-            <p class="text-sm text-gray-500">{{ events.length }} event{{ events.length !== 1 ? 's' : '' }} total</p>
+            <p class="text-sm text-gray-500">{{ calendarEvents.length }} event{{ calendarEvents.length !== 1 ? 's' : '' }} total</p>
             <button
               type="button"
               class="flex items-center gap-2 bg-blue-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
@@ -177,7 +179,7 @@
 
           <div class="space-y-3">
             <div
-              v-for="event in events"
+              v-for="event in calendarEvents"
               :key="event.title + event.start"
               class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
             >
@@ -219,65 +221,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-next'
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
+import { getEvents } from '@/services/api'
+import type { AdminEvent } from '@/data/events'
 
 const isAdmin = isAdminAuthenticated()
 const showManageModal = ref(false)
 const selectedDate = ref<string | null>(null)
+const loading = ref(true)
+const rawEvents = ref<AdminEvent[]>([])
 
-const events = [
-  {
-    title: 'Magic Commander',
-    start: '2026-09-20',
-    extendedProps: {
-      category: 'Tournament',
-      time: '7:00 PM - 10:00 PM',
-      game: 'Magic: The Gathering',
-      capacity: '32 players',
-      entryFee: '$5',
-      description: 'Standard format tournament with prizes for top finishers',
-    },
-  },
-  {
-    title: 'Magic Commander',
-    start: '2026-09-23',
-    extendedProps: {
-      category: 'Tournament',
-      time: '7:00 PM - 10:00 PM',
-      game: 'Magic: The Gathering',
-      capacity: '32 players',
-      entryFee: '$5',
-      description: 'Standard format tournament with prizes for top finishers',
-    },
-  },
-  {
-    title: 'Pokemon League',
-    start: '2026-09-23',
-    extendedProps: {
-      category: 'Casual Play',
-      time: '2:00 PM - 5:00 PM',
-      game: 'Pokemon TCG',
-      capacity: '20 players',
-      entryFee: 'Free',
-      description: 'Casual Pokemon play for all skill levels. Bring your own deck!',
-    },
-  },
-]
+onMounted(async () => {
+  try {
+    rawEvents.value = await getEvents()
+  } finally {
+    loading.value = false
+  }
+})
 
 const categories = [
-  {
-    name: 'Tournament',
-    color: '#b91c1c',
-  },
-  {
-    name: 'Casual Play',
-    color: '#15803d',
-  }
+  { name: 'Tournament', color: '#b91c1c' },
+  { name: 'Casual Play', color: '#15803d' },
 ]
 
 const selectedCategories = ref<string[]>([])
@@ -285,33 +254,58 @@ const selectedCategories = ref<string[]>([])
 const toggleCategory = (category: string) => {
   if (selectedCategories.value.includes(category)) {
     selectedCategories.value = selectedCategories.value.filter(item => item !== category)
-  }
-  else {
+  } else {
     selectedCategories.value.push(category)
   }
 }
 
-const getCategoryColor = (category: string) => {
-  return (categories.find(item => item.name === category)?.color ?? '#1e3a8a')
-}
+const getCategoryColor = (category: string) =>
+  categories.find(item => item.name === category)?.color ?? '#1e3a8a'
 
-/* Function generated by ChatGPT-5.5 */
-const filteredEvents = computed(() => {
-  const visibleEvents = selectedCategories.value.length === 0 ? events : events.filter(event => selectedCategories.value.includes(event.extendedProps.category))
+const calendarEvents = computed(() => {
+  const source = selectedCategories.value.length === 0
+    ? rawEvents.value
+    : rawEvents.value.filter(e => selectedCategories.value.includes(e.category))
 
-  return visibleEvents.map(event => ({
-    ...event,
-    backgroundColor: getCategoryColor(event.extendedProps.category),
-    borderColor: getCategoryColor(event.extendedProps.category),
+  return source.map(e => ({
+    title: e.title,
+    start: e.date,
+    backgroundColor: getCategoryColor(e.category),
+    borderColor: getCategoryColor(e.category),
+    extendedProps: {
+      category: e.category,
+      time: e.time,
+      game: e.game,
+      capacity: e.capacity,
+      entryFee: e.entryFee,
+      description: e.description,
+    },
   }))
 })
 
 const selectedDayEvents = computed(() => {
   if (!selectedDate.value) return []
-  const matchingEvents = events.filter(e => e.start === selectedDate.value)
-  if (selectedCategories.value.length === 0) return matchingEvents
-  return matchingEvents.filter(e => selectedCategories.value.includes(e.extendedProps.category))
+  const matches = rawEvents.value.filter(e => e.date === selectedDate.value)
+  if (selectedCategories.value.length === 0) return matches.map(toCalendarEvent)
+  return matches
+    .filter(e => selectedCategories.value.includes(e.category))
+    .map(toCalendarEvent)
 })
+
+function toCalendarEvent(e: AdminEvent) {
+  return {
+    title: e.title,
+    start: e.date,
+    extendedProps: {
+      category: e.category,
+      time: e.time,
+      game: e.game,
+      capacity: e.capacity,
+      entryFee: e.entryFee,
+      description: e.description,
+    },
+  }
+}
 
 const formattedSelectedDate = computed(() => {
   if (!selectedDate.value) return ''
@@ -323,24 +317,30 @@ const handleDateClick = (info: any) => {
   selectedDate.value = info.dateStr
 }
 
-const calendarOptions = computed (() =>({
+const calendarOptions = computed(() => ({
   plugins: [dayGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
-  /*
-  Overrides the default header toolbar to center the title and move the navigation buttons to the left and right.
-  Leftover styling behavior from the default header toolbar causes the right arrow to have a grey background. Default header toolbar looks better (not obiously bugged) so will keep until fixed.
-  headerToolbar: {
-    left: 'prev',
-    center: 'title',
-    right: 'next',
-  },
-  */
   contentHeight: 680,
   dateClick: handleDateClick,
-  events: filteredEvents.value,
+  events: calendarEvents.value,
 }))
 
-const sidebarEvents: { day: string; month: string; title: string; time: string; category: string }[] = []
+const sidebarEvents = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return rawEvents.value
+    .filter(e => e.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map(e => {
+      const d = new Date(e.date + 'T00:00:00')
+      return {
+        day: d.getDate().toString(),
+        month: d.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
+        title: e.title,
+        time: e.time,
+        category: e.category,
+      }
+    })
+})
 </script>
 
 <style scoped>
@@ -356,18 +356,6 @@ const sidebarEvents: { day: string; month: string; title: string; time: string; 
   font-size: 1.25rem;
   font-weight: 700;
 }
-
-/*
-Makes "today" button in default header toobar white (against white background) so will be commented out until default is changed"
-:deep(.fc-button) {
-  background: transparent !important;
-  border: none !important;
-  color: white !important;
-  box-shadow: none !important;
-  font-size: 1.1rem;
-  padding: 4px 10px !important;
-}
-*/
 
 :deep(.fc-button:hover) {
   background: rgba(255, 255, 255, 0.15) !important;

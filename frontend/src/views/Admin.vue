@@ -34,7 +34,11 @@
           </p>
 
           <p class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Demo access: enter any valid email and a non-empty password.
+            Demo credentials: <strong>admin@skyscrapercomics.com</strong> / <strong>admin123</strong>
+          </p>
+
+          <p v-if="loginError" role="alert" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {{ loginError }}
           </p>
 
           <form @submit.prevent="handleLogin" class="space-y-5">
@@ -68,11 +72,11 @@
             </div>
             <button
               type="submit"
-              class="w-full rounded-lg bg-violet-700 px-4 py-3 font-semibold text-white transition hover:bg-violet-800 focus:outline-none focus:ring-4 focus:ring-violet-200"
+              :disabled="loading"
+              class="w-full rounded-lg bg-violet-700 px-4 py-3 font-semibold text-white transition hover:bg-violet-800 focus:outline-none focus:ring-4 focus:ring-violet-200 disabled:opacity-60"
             >
-              Sign in to Admin Portal
+              {{ loading ? 'Signing in…' : 'Sign in to Admin Portal' }}
             </button>
-
           </form>
         </div>
       </section>
@@ -93,13 +97,25 @@ defineOptions({ name: 'AdminLogin' })
 
 const email = ref('')
 const password = ref('')
+const loading = ref(false)
+const loginError = ref('')
 const route = useRoute()
 const router = useRouter()
 
 const handleLogin = async () => {
-  signInAdmin()
-  const requestedRoute = typeof route.query.redirect === 'string' ? route.query.redirect : '/admin'
-  const destination = requestedRoute.startsWith('/admin') ? requestedRoute : '/admin'
-  await router.replace(destination)
+  loginError.value = ''
+  loading.value = true
+  try {
+    const result = await signInAdmin(email.value, password.value)
+    if (!result.success) {
+      loginError.value = result.error ?? 'Invalid email or password.'
+      return
+    }
+    const requestedRoute = typeof route.query.redirect === 'string' ? route.query.redirect : '/admin'
+    const destination = requestedRoute.startsWith('/admin') ? requestedRoute : '/admin'
+    await router.replace(destination)
+  } finally {
+    loading.value = false
+  }
 }
 </script>

@@ -85,7 +85,7 @@
               id="prod-image"
               v-model="form.image"
               type="text"
-              placeholder="https://..."
+              placeholder="https://... or /images/..."
               class="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
             />
           </div>
@@ -105,14 +105,17 @@
         <p v-if="successMessage" class="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
           {{ successMessage }}
         </p>
+        <p v-if="errorMessage" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+          {{ errorMessage }}
+        </p>
 
-        <!-- Bottom action buttons -->
         <div class="flex gap-3 pt-2">
           <button
             type="submit"
-            class="rounded-lg bg-violet-700 px-6 py-3 font-semibold text-white transition hover:bg-violet-800 focus:outline-none focus:ring-4 focus:ring-violet-200"
+            :disabled="saving"
+            class="rounded-lg bg-violet-700 px-6 py-3 font-semibold text-white transition hover:bg-violet-800 focus:outline-none focus:ring-4 focus:ring-violet-200 disabled:opacity-60"
           >
-            Add Product
+            {{ saving ? 'Adding…' : 'Add Product' }}
           </button>
           <button
             type="button"
@@ -125,7 +128,7 @@
       </form>
     </div>
 
-    <!-- Product list / empty state -->
+    <!-- Product list -->
     <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-bold text-gray-900">Product Catalog</h3>
@@ -140,24 +143,30 @@
         </button>
       </div>
 
-      <div v-if="addedProducts.length === 0" class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
-        <p class="font-semibold text-gray-700">No products added yet</p>
-        <p class="mt-2 text-sm text-gray-500">Click "Add New Product" to add a product to the catalog.</p>
+      <p v-if="loading" class="text-sm text-gray-500">Loading products…</p>
+
+      <div v-else-if="products.length === 0" class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-8 text-center">
+        <p class="font-semibold text-gray-700">No products yet</p>
+        <p class="mt-2 text-sm text-gray-500">Click "Add New Product" to add the first item.</p>
       </div>
 
       <div v-else class="divide-y divide-gray-100">
         <div
-          v-for="product in addedProducts"
+          v-for="product in products"
           :key="product.id"
-          class="flex items-center justify-between py-4"
+          class="flex items-center justify-between py-4 gap-4"
         >
-          <div>
-            <p class="font-semibold text-gray-900">{{ product.name }}</p>
+          <div class="min-w-0 flex-1">
+            <p class="font-semibold text-gray-900 truncate">{{ product.name }}</p>
             <p class="text-sm text-gray-500 capitalize">{{ product.type }} &middot; {{ product.brand }} &middot; ${{ Number(product.price).toFixed(2) }}</p>
           </div>
-          <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
+          <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800 flex-shrink-0">
             Stock: {{ product.stock }}
           </span>
+          <div class="flex gap-2 flex-shrink-0">
+            <AdminEditProduct :product="product" @save="handleSaveProduct" />
+            <AdminDeleteProduct :product="product" @delete="handleDeleteProduct" />
+          </div>
         </div>
       </div>
     </div>
@@ -166,16 +175,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Plus } from 'lucide-vue-next'
+import type { Product } from '@/types/product'
+import { getProducts, createProduct, updateProduct, deleteProduct } from '@/services/api'
+import AdminEditProduct from '@/components/admin/AdminEditProduct.vue'
+import AdminDeleteProduct from '@/components/admin/AdminDeleteProduct.vue'
 
 const showAddForm = ref(false)
 const successMessage = ref('')
+const errorMessage = ref('')
+const saving = ref(false)
+const loading = ref(true)
+const products = ref<Product[]>([])
+
+onMounted(async () => {
+  try {
+    products.value = await getProducts()
+  } catch {
+    errorMessage.value = 'Failed to load products. Is the backend running?'
+  } finally {
+    loading.value = false
+  }
+})
 
 const emptyForm = () => ({
   name: '',
   price: '',
-  type: '',
+  type: '' as '' | 'comics' | 'tcg',
   brand: '',
   stock: '',
   description: '',
@@ -184,22 +211,64 @@ const emptyForm = () => ({
 
 const form = ref(emptyForm())
 
-const addedProducts = ref<Array<ReturnType<typeof emptyForm> & { id: number }>>([])
-let nextId = 1
+const handleAddProduct = async () => {
+  errorMessage.value = ''
+  saving.value = true
+  try {
+    const created = await createProduct({
+      name: form.value.name,
+      price: Number(form.value.price),
+      type: form.value.type as 'comics' | 'tcg',
+      brand: form.value.brand,
+      stock: Number(form.value.stock),
+      description: form.value.description,
+      image: form.value.image,
+    })
+    products.value.push(created)
+    successMessage.value = `"${created.name}" has been added to the catalog.`
+    form.value = emptyForm()
+    setTimeout(() => {
+      successMessage.value = ''
+      showAddForm.value = false
+    }, 1500)
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to add product.'
+  } finally {
+    saving.value = false
+  }
+}
 
-const handleAddProduct = () => {
-  addedProducts.value.push({ ...form.value, id: nextId++ })
-  successMessage.value = `"${form.value.name}" has been added to the catalog.`
-  form.value = emptyForm()
-  setTimeout(() => {
-    successMessage.value = ''
-    showAddForm.value = false
-  }, 1500)
+const handleSaveProduct = async (updated: Product) => {
+  try {
+    const saved = await updateProduct(updated.id, {
+      name: updated.name,
+      price: updated.price,
+      type: updated.type,
+      brand: updated.brand,
+      stock: updated.stock,
+      description: updated.description,
+      image: updated.image,
+    })
+    const idx = products.value.findIndex(p => p.id === saved.id)
+    if (idx !== -1) products.value[idx] = saved
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to save product.'
+  }
+}
+
+const handleDeleteProduct = async (productId: number) => {
+  try {
+    await deleteProduct(productId)
+    products.value = products.value.filter(p => p.id !== productId)
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to delete product.'
+  }
 }
 
 const cancelAddProduct = () => {
   form.value = emptyForm()
   successMessage.value = ''
+  errorMessage.value = ''
   showAddForm.value = false
 }
 </script>
