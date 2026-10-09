@@ -95,7 +95,7 @@
                                             filter
                                             .toLowerCase()
                                             .normalize('NFD')                  // Code provided by Google Gemini
-                                            .replace(/[\u0300-\u036f]/g, ''    // Code provided by Google Gemini
+                                            .replace(/[̀-ͯ]/g, ''    // Code provided by Google Gemini
                                         )
                                         ? 'bg-blue-900 text-white shadow-md'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -108,33 +108,34 @@
             </div>
         </div>
 
+        <!-- Loading state -->
+        <p v-if="loading" class="text-gray-500">Loading products…</p>
+
         <!-- Products Grid -->
-         <div v-if="filteredProducts.length==0" class="text-left text-black">
-            No products found.
-        </div>
-         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
-            <ProductCard
-                v-for="Product in filteredProducts"
-                :key="Product.id"
-                :product="Product"
-                @reserve="handleReserve"
-            />
-        </div>
+        <template v-else>
+            <div v-if="filteredProducts.length === 0" class="text-left text-black">
+                No products found.
+            </div>
+            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
+                <ProductCard
+                    v-for="product in filteredProducts"
+                    :key="product.id"
+                    :product="product"
+                    @reserve="handleReserve"
+                />
+            </div>
+        </template>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { products } from '@/mock-data/products'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
-import {
-    getCurrentUserEmail,
-    getProductStock,
-    reserveProduct,
-} from '@/composables/useReservations'
+import { getCurrentUserEmail, reserveProduct } from '@/composables/useReservations'
+import { getProducts } from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -171,14 +172,20 @@ const currentSubFilters = computed(() => {
   }
 })
 
-const productList = ref<Product[]>(
-    products.map((product) => ({
-        ...product,
-        stock: getProductStock(product),
-    })),
-)
+const productList = ref<Product[]>([])
+const loading = ref(true)
 const reservationMessage = ref('')
 const reservationError = ref('')
+
+onMounted(async () => {
+  try {
+    productList.value = await getProducts()
+  } catch {
+    reservationError.value = 'Failed to load products. Is the backend running?'
+  } finally {
+    loading.value = false
+  }
+})
 
 const filteredProducts = computed(() => {
     return productList.value.filter((p: Product) => {
@@ -194,11 +201,11 @@ const filteredProducts = computed(() => {
     })
 })
 
-const handleReserve = (product: Product) => {
+const handleReserve = async (product: Product) => {
     reservationMessage.value = ''
     reservationError.value = ''
 
-    const result = reserveProduct(product, getCurrentUserEmail())
+    const result = await reserveProduct(product, getCurrentUserEmail())
 
     if (!result.success) {
         reservationError.value = result.message
@@ -209,5 +216,4 @@ const handleReserve = (product: Product) => {
     product.stock = result.stock
     reservationMessage.value = result.message
 }
-
 </script>

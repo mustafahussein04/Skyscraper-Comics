@@ -37,7 +37,7 @@
                         class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none"
                         required
                     >
-                        <option value="comic">comic</option>
+                        <option value="comics">comics</option>
                         <option value="tcg">tcg</option>
                     </select>
                 </div>

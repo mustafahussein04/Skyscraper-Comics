@@ -9,25 +9,31 @@
         </p>
       </div>
 
-      <!-- SCRUM-83: Add new Events button -->
       <button
         type="button"
         class="inline-flex items-center gap-2 rounded-lg bg-blue-900 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-blue-800"
+        @click="addingEvent = true"
       >
         <Plus class="h-5 w-5" aria-hidden="true" />
         Add new Event
       </button>
     </div>
 
-    <!-- SCRUM-84: Upcoming events list with edit buttons -->
-    <div class="space-y-4">
+    <p v-if="errorMessage" role="alert" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+      {{ errorMessage }}
+    </p>
+
+    <p v-if="loading" class="text-sm text-gray-500">Loading events…</p>
+
+    <!-- Upcoming events list -->
+    <div v-else class="space-y-4">
       <article
         v-for="event in upcomingEvents"
         :key="event.id"
         class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
       >
         <div class="flex gap-4">
-          <!-- Event image, or monogram fallback from title's first letter -->
+          <!-- Event image, or monogram fallback -->
           <img
             v-if="event.image"
             :src="event.image"
@@ -48,25 +54,24 @@
             <div class="mt-auto flex items-center justify-between gap-2 pt-2">
               <p class="text-xs font-medium text-violet-600">{{ formatEventDate(event.date) }} · {{ event.time }}</p>
               <div class="flex items-center gap-2">
-              <button
-                type="button"
-                class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
-                :aria-label="`Edit ${event.title}`"
-                @click="editingEvent = event"
-              >
-                <Pencil class="h-4 w-4" aria-hidden="true" />
-                Edit
-              </button>
-              <!-- SCRUM-85: Delete button with confirm -->
-              <button
-                type="button"
-                class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-                :aria-label="`Delete ${event.title}`"
-                @click="deleteEvent(event)"
-              >
-                <Trash2 class="h-4 w-4" aria-hidden="true" />
-                Delete
-              </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+                  :aria-label="`Edit ${event.title}`"
+                  @click="editingEvent = event"
+                >
+                  <Pencil class="h-4 w-4" aria-hidden="true" />
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                  :aria-label="`Delete ${event.title}`"
+                  @click="handleDelete(event)"
+                >
+                  <Trash2 class="h-4 w-4" aria-hidden="true" />
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -78,50 +83,89 @@
       </div>
     </div>
 
-    <!-- SCRUM-86: floating centered edit window -->
+    <!-- Edit modal (also used for adding — id === 0 means new) -->
     <AdminEventEditModal
-      v-if="editingEvent"
-      :event="editingEvent"
-      @close="editingEvent = null"
-      @save="saveEvent"
+      v-if="editingEvent !== null || addingEvent"
+      :event="editingEvent ?? blankEvent()"
+      @close="editingEvent = null; addingEvent = false"
+      @save="handleModalSave"
     />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
-import { adminEvents, type AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/data/events'
 import AdminEventEditModal from '@/components/admin/AdminEventEditModal.vue'
+import { getEvents, createEvent, updateEvent, deleteEvent as apiDeleteEvent } from '@/services/api'
 
-// Local reactive copy so deletes only affect this view (refresh restores the mock data)
-const events = ref([...adminEvents])
-
-// SCRUM-86: event currently being edited
+const loading = ref(true)
+const errorMessage = ref('')
+const events = ref<AdminEvent[]>([])
 const editingEvent = ref<AdminEvent | null>(null)
+const addingEvent = ref(false)
 
-// SCRUM-84: only events that haven't happened yet, soonest first
-// (ISO dates sort chronologically as strings, and editing a date re-sorts automatically)
+onMounted(async () => {
+  try {
+    events.value = await getEvents()
+  } catch {
+    errorMessage.value = 'Failed to load events. Is the backend running?'
+  } finally {
+    loading.value = false
+  }
+})
+
+const blankEvent = (): AdminEvent => ({
+  id: 0,
+  title: '',
+  description: '',
+  date: '',
+  category: '',
+  time: '',
+  game: '',
+  capacity: '',
+  entryFee: '',
+})
+
 const upcomingEvents = computed(() => {
   const today = new Date().toISOString().split('T')[0]
   return events.value
-    .filter(event => event.date >= today)
+    .filter(e => e.date >= today)
     .sort((a, b) => a.date.localeCompare(b.date))
 })
 
-// SCRUM-85: delete with confirmation
-const deleteEvent = (event: AdminEvent) => {
+const handleDelete = async (event: AdminEvent) => {
   if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
-  events.value = events.value.filter(e => e.id !== event.id)
+  try {
+    await apiDeleteEvent(event.id)
+    events.value = events.value.filter(e => e.id !== event.id)
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to delete event.'
+  }
 }
 
-// SCRUM-86: write edited fields back to the list
-const saveEvent = (updated: AdminEvent) => {
-  events.value = events.value.map(e => (e.id === updated.id ? updated : e))
-  editingEvent.value = null
+const handleModalSave = async (updated: AdminEvent) => {
+  errorMessage.value = ''
+  try {
+    if (updated.id === 0) {
+      // Create new
+      const { id: _id, ...data } = updated
+      const created = await createEvent(data)
+      events.value.push(created)
+      addingEvent.value = false
+    } else {
+      // Update existing
+      const { id, ...data } = updated
+      const saved = await updateEvent(id, data)
+      events.value = events.value.map(e => (e.id === saved.id ? saved : e))
+      editingEvent.value = null
+    }
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to save event.'
+  }
 }
 
-// Pretty-print the ISO date for the card view
 const formatEventDate = (iso: string) => {
   const date = new Date(iso + 'T00:00:00')
   return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
