@@ -154,7 +154,7 @@
         <div v-for="event in events" :key="event.title" class="bg-white rounded-lg p-6 shadow-sm">
           <h3 class="font-bold text-lg">{{ event.title }}</h3>
           <p class="text-gray-600 text-sm">{{ event.desc }}</p>
-          <p class="text-gray-500 text-sm mt-1">{{ event.time }}</p>
+          <p class="text-gray-500 text-sm mt-1">{{ event.date }} | {{ event.time }}</p>
         </div>
       </div>
       <div class="text-center">
@@ -169,9 +169,28 @@
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { getEvents } from '@/services/api'
+import type { AdminEvent } from '@/data/events'
 
-const events = [
-  { title: 'Dummy Event #1', desc: 'Standard format tournament. Entry fee: $5', time: 'Mar 7 | 7:00 PM - 10:00 PM' },
-  { title: 'Dummy Event #2', desc: 'Casual play and trading session for all ages', time: 'Mar 8 | 2:00 PM - 5:00 PM' },
-]
+const loading = ref(true)
+const rawEvents = ref<AdminEvent[]>([])
+
+onMounted(async () => {
+  try {
+    rawEvents.value = await getEvents()
+  } finally {
+    loading.value = false
+  }
+})
+
+const events = computed(() => {
+  return rawEvents.value.slice(0, 2).map((event) => ({
+    id: event.id,
+    title: event.title,
+    desc: event.description ?? '',
+    date: event.date ?? '',
+    time: event.time ?? '',
+  }))
+})
 </script>
