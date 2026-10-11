@@ -103,6 +103,10 @@ import { getEvents, createEvent, updateEvent, deleteEvent as apiDeleteEvent } fr
 const loading = ref(true)
 const errorMessage = ref('')
 const events = ref<AdminEvent[]>([])
+
+onMounted(async () => {
+  events.value = await getEvents()
+})
 const editingEvent = ref<AdminEvent | null>(null)
 const addingEvent = ref(false)
 
@@ -128,12 +132,87 @@ const blankEvent = (): AdminEvent => ({
   entryFee: '',
 })
 
+const getLocalToday = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const isValidDate = (value: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+
+  const date = new Date(`${value}T00:00:00Z`)
+  return !Number.isNaN(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value
+}
+
+const validateEvent = (event: AdminEvent): string | null => {
+  if (!event.title.trim()) return 'Enter an event title.'
+  if (!event.date || !isValidDate(event.date)) return 'Enter a valid event date.'
+  const time = event.time.trim()
+  const timePattern =
+    /^(?:(?:0?[1-9]|1[0-2]):[0-5]\d\s?(?:AM|PM)|(?:[01]\d|2[0-3]):[0-5]\d)(?:\s*[-–]\s*(?:(?:0?[1-9]|1[0-2]):[0-5]\d\s?(?:AM|PM)|(?:[01]\d|2[0-3]):[0-5]\d))?$/i
+
+  if (!timePattern.test(time)) {
+    return 'Enter a time or range, such as 2:00 PM - 5:00 PM.'
+}
+
+  if (event.capacity.trim()) {
+    const capacity = Number(event.capacity)
+    if (!Number.isInteger(capacity) || capacity <= 0) {
+      return 'Capacity must be a positive whole number.'
+    }
+  }
+
+  if (event.entryFee.trim()) {
+    const entryFee = Number(event.entryFee)
+    if (!Number.isFinite(entryFee) || entryFee < 0) {
+      return 'Entry fee must be zero or greater.'
+    }
+  }
+
+  return null
+}
+
 const upcomingEvents = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
+  const today = getLocalToday()
+
   return events.value
-    .filter(e => e.date >= today)
+    .filter(event => isValidDate(event.date) && event.date >= today)
     .sort((a, b) => a.date.localeCompare(b.date))
 })
+
+const handleModalSave = async (updated: AdminEvent) => {
+  errorMessage.value = ''
+
+  const validationError = validateEvent(updated)
+  if (validationError) {
+    errorMessage.value = validationError
+    return
+  }
+
+  try {
+    if (updated.id === 0) {
+      const { id: _id, ...data } = updated
+      const created = await createEvent(data)
+      events.value.push(created)
+      addingEvent.value = false
+    } else {
+      const { id, ...data } = updated
+      const saved = await updateEvent(id, data)
+      events.value = events.value.map(event =>
+        event.id === saved.id ? saved : event
+      )
+      editingEvent.value = null
+    }
+  } catch (err) {
+    errorMessage.value = err instanceof Error
+      ? err.message
+      : 'Failed to save event.'
+  }
+}
 
 const handleDelete = async (event: AdminEvent) => {
   if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
@@ -145,26 +224,6 @@ const handleDelete = async (event: AdminEvent) => {
   }
 }
 
-const handleModalSave = async (updated: AdminEvent) => {
-  errorMessage.value = ''
-  try {
-    if (updated.id === 0) {
-      // Create new
-      const { id: _id, ...data } = updated
-      const created = await createEvent(data)
-      events.value.push(created)
-      addingEvent.value = false
-    } else {
-      // Update existing
-      const { id, ...data } = updated
-      const saved = await updateEvent(id, data)
-      events.value = events.value.map(e => (e.id === saved.id ? saved : e))
-      editingEvent.value = null
-    }
-  } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Failed to save event.'
-  }
-}
 
 const formatEventDate = (iso: string) => {
   const date = new Date(iso + 'T00:00:00')
