@@ -97,6 +97,7 @@
             id="prod-desc"
             v-model="form.description"
             rows="3"
+            required
             placeholder="Brief description of the product..."
             class="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100 resize-none"
           ></textarea>
@@ -213,14 +214,30 @@ const form = ref(emptyForm())
 
 const handleAddProduct = async () => {
   errorMessage.value = ''
+  successMessage.value = ''
+  const { name, price, type, brand, stock, description } = form.value
+  if (!name.trim() || !description.trim() || !type || !brand.trim()) {
+    errorMessage.value = 'Please complete all required fields.'
+    return
+  }
+  const parsedPrice = Number(price)
+  const parsedStock = Number(stock)
+  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    errorMessage.value = 'Price must be a valid non-negative number.'
+    return
+  }
+  if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+    errorMessage.value = 'Stock must be a non-negative whole number.'
+    return
+  }
   saving.value = true
   try {
     const created = await createProduct({
       name: form.value.name,
-      price: Number(form.value.price),
+      price: parsedPrice,
       type: form.value.type as 'comics' | 'tcg',
       brand: form.value.brand,
-      stock: Number(form.value.stock),
+      stock: parsedStock,
       description: form.value.description,
       image: form.value.image,
     })
