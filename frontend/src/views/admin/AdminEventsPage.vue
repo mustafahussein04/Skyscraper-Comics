@@ -19,6 +19,10 @@
       </button>
     </div>
 
+    <p v-if="successMessage" role="status" class="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+      {{ successMessage }}
+    </p>
+
     <p v-if="errorMessage" role="alert" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
       {{ errorMessage }}
     </p>
@@ -102,6 +106,7 @@ import { getEvents, createEvent, updateEvent, deleteEvent as apiDeleteEvent } fr
 
 const loading = ref(true)
 const errorMessage = ref('')
+const successMessage = ref('')
 const events = ref<AdminEvent[]>([])
 
 onMounted(async () => {
@@ -184,21 +189,29 @@ const upcomingEvents = computed(() => {
     .sort((a, b) => a.date.localeCompare(b.date))
 })
 
+const handleDelete = async (event: AdminEvent) => {
+  if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
+  errorMessage.value = ''
+  successMessage.value = ''
+  try {
+    await apiDeleteEvent(event.id)
+    events.value = events.value.filter(e => e.id !== event.id)
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : 'Failed to delete event.'
+  }
+}
+
 const handleModalSave = async (updated: AdminEvent) => {
   errorMessage.value = ''
-
-  const validationError = validateEvent(updated)
-  if (validationError) {
-    errorMessage.value = validationError
-    return
-  }
-
+  successMessage.value = ''
   try {
     if (updated.id === 0) {
       const { id: _id, ...data } = updated
       const created = await createEvent(data)
       events.value.push(created)
       addingEvent.value = false
+      // SCRUM-87: success confirmation, list updates immediately above
+      successMessage.value = `Event "${created.title}" created.`
     } else {
       const { id, ...data } = updated
       const saved = await updateEvent(id, data)
@@ -206,6 +219,8 @@ const handleModalSave = async (updated: AdminEvent) => {
         event.id === saved.id ? saved : event
       )
       editingEvent.value = null
+      // SCRUM-87: success confirmation, updated event appears in the list below
+      successMessage.value = `Event "${saved.title}" updated.`
     }
   } catch (err) {
     errorMessage.value = err instanceof Error
