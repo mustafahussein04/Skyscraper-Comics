@@ -28,6 +28,7 @@
             id="edit-title"
             v-model="draft.title"
             type="text"
+            required
             class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
           />
         </div>
@@ -39,6 +40,7 @@
               id="edit-date"
               v-model="draft.date"
               type="date"
+              required
               class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
             />
           </div>
@@ -117,7 +119,8 @@
             type="submit"
             class="rounded-lg bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
           >
-            Save Changes
+            <!-- SCRUM-87: "Update Event" on edit; create-mode modal keeps an accurate label -->
+            {{ isNew ? 'Create Event' : 'Update Event' }}
           </button>
         </div>
       </form>
@@ -126,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { X } from 'lucide-vue-next'
 import type { AdminEvent } from '@/data/events'
 
@@ -141,6 +144,9 @@ const emit = defineEmits<{
 
 // Work on a draft copy — Cancel discards, Save writes back
 const draft = reactive({ ...props.event })
+
+// SCRUM-87: id === 0 means the page opened this modal in "add new" mode
+const isNew = computed(() => props.event.id === 0)
 
 const save = () => {
   emit('save', { ...draft })
