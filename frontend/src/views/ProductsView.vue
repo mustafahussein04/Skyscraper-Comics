@@ -99,7 +99,11 @@
         </div>
 
         <!-- Products Grid -->
-         <div v-if="filteredProducts.length==0" class="text-left text-black">
+         <p v-if="loading" class="text-gray-600">Loading products...</p>
+         <p v-else-if="errorMessage" class="rounded-lg bg-red-50 px-4 py-3 text-red-800">
+            {{ errorMessage }}
+         </p>
+         <div v-else-if="filteredProducts.length==0" class="text-left text-black">
             No products found.
         </div>
          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
@@ -112,11 +116,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { products } from '@/mock-data/products'
+import { ref, computed, watch, onMounted } from 'vue'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getProducts } from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -139,6 +143,19 @@ watch(() => route.params.filter, (newUrlFilter) => {
 })
 // End of code provided by Google Gemini
 const selectedSubFilter = ref('All')
+const productList = ref<Product[]>([])
+const loading = ref(true)
+const errorMessage = ref('')
+
+onMounted(async () => {
+    try {
+        productList.value = await getProducts()
+    } catch (error) {
+        errorMessage.value = error instanceof Error ? error.message : 'Failed to load products.'
+    } finally {
+        loading.value = false
+    }
+})
 
 const productsFilters = ['All', 'Comics', 'TCG']
 const comicsFilters = ['All', 'Marvel', 'DC', 'Image', 'Dark Horse']
@@ -155,7 +172,7 @@ const currentSubFilters = computed(() => {
 })
 
 const filteredProducts = computed(() => {
-    return products.filter((p: Product) => {
+    return productList.value.filter((p: Product) => {
         const matchesType = p.type === (selectedFilter.value as string).toLowerCase() || selectedFilter.value === 'All'
         const matchesBrand = p.brand === selectedSubFilter.value || selectedSubFilter.value === 'All'
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
