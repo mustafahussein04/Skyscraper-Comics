@@ -109,9 +109,6 @@ const errorMessage = ref('')
 const successMessage = ref('')
 const events = ref<AdminEvent[]>([])
 
-onMounted(async () => {
-  events.value = await getEvents()
-})
 const editingEvent = ref<AdminEvent | null>(null)
 const addingEvent = ref(false)
 
@@ -228,17 +225,6 @@ const handleModalSave = async (updated: AdminEvent) => {
       : 'Failed to save event.'
   }
 }
-
-const handleDelete = async (event: AdminEvent) => {
-  if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
-  try {
-    await apiDeleteEvent(event.id)
-    events.value = events.value.filter(e => e.id !== event.id)
-  } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Failed to delete event.'
-  }
-}
-
 
 const formatEventDate = (iso: string) => {
   const date = new Date(iso + 'T00:00:00')
