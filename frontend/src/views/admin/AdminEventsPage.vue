@@ -130,6 +130,7 @@ const blankEvent = (): AdminEvent => ({
   game: '',
   capacity: '',
   entryFee: '',
+  registrationLink: '',
 })
 
 const getLocalToday = () => {
