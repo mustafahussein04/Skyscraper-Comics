@@ -64,7 +64,10 @@
                   {{ event.extendedProps.description }}
                 </div>
 
-                <button class="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors">
+                <button
+                  class="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors"
+                  @click="handleRegisterClick(event)"
+                >
                   Register for Event
                 </button>
               </div>
@@ -229,6 +232,7 @@ import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-n
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 import { getEvents } from '@/services/api'
 import type { AdminEvent } from '@/data/events'
+import { trackEvent } from '@/composables/useAnalytics'
 
 const isAdmin = isAdminAuthenticated()
 const showManageModal = ref(false)
@@ -256,7 +260,17 @@ const toggleCategory = (category: string) => {
     selectedCategories.value = selectedCategories.value.filter(item => item !== category)
   } else {
     selectedCategories.value.push(category)
+    trackEvent('event_category_view', { event_category: category })
   }
+}
+
+const handleRegisterClick = (event: ReturnType<typeof toCalendarEvent>) => {
+  trackEvent('register_event_click', {
+    // "event_name" would clash with GA4's built-in Event name dimension
+    event_title: event.title,
+    event_category: event.extendedProps.category,
+    event_date: event.start,
+  })
 }
 
 const getCategoryColor = (category: string) =>
