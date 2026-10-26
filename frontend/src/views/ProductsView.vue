@@ -126,15 +126,23 @@
                 v-for="Product in filteredProducts"
                 :key="Product.id"
                 :product="Product"
-                @reserve="handleReserve" />
+                @reserve="reservingProduct = $event" />
         </div>
     </div>
+
+    <ReserveModal
+      v-if="reservingProduct"
+      :product="reservingProduct"
+      @close="reservingProduct = null"
+      @reserved="onReserved"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
+import ReserveModal from '@/components/products/ReserveModal.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/services/api'
 import { getCurrentUserEmail, reserveProduct } from '@/composables/useReservations'
@@ -144,6 +152,13 @@ const route = useRoute()
 const router = useRouter()
 
 const showFilters = ref(false)
+const reservingProduct = ref<Product | null>(null)
+
+const onReserved = async () => {
+  try {
+    productList.value = await getProducts()
+  } catch { /* ignore */ }
+}
 
 const searchQuery = ref('')
 const selectedFilter = ref(route.params.filter || 'All')

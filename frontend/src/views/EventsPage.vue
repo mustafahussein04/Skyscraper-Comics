@@ -284,6 +284,7 @@ const toggleCategory = (category: string) => {
 
 // SCRUM-167: color lookup moved to the shared config (keeps default fallback for old/missing categories)
 const getCategoryColor = (category: string) => configGetCategoryColor(category)
+
 const handleRegisterClick = (event: ReturnType<typeof toCalendarEvent>) => {
   trackEvent('register_event_click', {
     // "event_name" would clash with GA4's built-in Event name dimension
@@ -292,9 +293,6 @@ const handleRegisterClick = (event: ReturnType<typeof toCalendarEvent>) => {
     event_date: event.start,
   })
 }
-
-const getCategoryColor = (category: string) =>
-  categories.find(item => item.name === category)?.color ?? '#1e3a8a'
 
 const calendarEvents = computed(() => {
   const source = selectedCategories.value.length === 0
