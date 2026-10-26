@@ -103,7 +103,10 @@
                   {{ event.extendedProps.description }}
                 </div>
 
-                <button class="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors">
+                <button
+                  class="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors"
+                  @click="handleRegisterClick(event)"
+                >
                   Register for Event
                 </button>
               </div>
@@ -242,6 +245,7 @@ import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 import { getEvents } from '@/services/api'
 import type { AdminEvent } from '@/data/events'
 import { EVENT_CATEGORIES, getCategoryColor as configGetCategoryColor } from '@/config/eventCategories'
+import { trackEvent } from '@/composables/useAnalytics'
 
 const isAdmin = isAdminAuthenticated()
 const showManageModal = ref(false)
@@ -267,11 +271,23 @@ const toggleCategory = (category: string) => {
     selectedCategories.value = selectedCategories.value.filter(item => item !== category)
   } else {
     selectedCategories.value.push(category)
+    trackEvent('event_category_view', { event_category: category })
   }
 }
 
 // SCRUM-167: color lookup moved to the shared config (keeps default fallback for old/missing categories)
 const getCategoryColor = (category: string) => configGetCategoryColor(category)
+const handleRegisterClick = (event: ReturnType<typeof toCalendarEvent>) => {
+  trackEvent('register_event_click', {
+    // "event_name" would clash with GA4's built-in Event name dimension
+    event_title: event.title,
+    event_category: event.extendedProps.category,
+    event_date: event.start,
+  })
+}
+
+const getCategoryColor = (category: string) =>
+  categories.find(item => item.name === category)?.color ?? '#1e3a8a'
 
 const calendarEvents = computed(() => {
   const source = selectedCategories.value.length === 0
