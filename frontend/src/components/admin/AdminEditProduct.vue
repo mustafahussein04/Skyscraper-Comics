@@ -71,6 +71,21 @@
                         required
                     ></textarea>
                 </div>
+                <div>
+                    <label for="edit-prod-image" class="block text-sm font-medium text-slate-700 mb-1">Product Image</label>
+                    <input id="edit-prod-image" type="file" accept="image/jpeg,image/png,image/webp" @change="handleImageChange" class="sr-only" />
+                    <div class="flex min-h-11 items-center gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2">
+                        <label for="edit-prod-image" class="inline-flex cursor-pointer items-center rounded-md bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800 focus-within:outline-none focus-within:ring-4 focus-within:ring-blue-100">
+                            Choose File
+                        </label>
+                        <span class="min-w-0 truncate text-sm text-slate-600">
+                            {{ imageFile?.name ?? 'No file chosen' }}
+                        </span>
+                    </div>
+                    <img v-if="previewImage" :src="previewImage" alt="Product preview" class="mt-3 h-32 w-32 rounded-lg object-cover" />
+                    <p class="mt-1 text-xs text-slate-500">Choose a new JPG, PNG, or WEBP image to replace the current one. Maximum 5 MB.</p>
+                    <p v-if="imageError" class="mt-1 text-sm text-red-600">{{ imageError }}</p>
+                </div>
                 <div class="flex justify-end gap-4">
                     <button
                         @click="closeModal"
@@ -92,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import type { Product } from '../../types/product'; 
 
 const props = defineProps<{
@@ -100,9 +115,15 @@ const props = defineProps<{
 }>();
 
 const isOpen = ref(false);
+const imageFile = ref<File | null>(null)
+const previewImage = ref(props.product.image)
+const imageError = ref('')
 
 const openModal = () => {
     isOpen.value = true;
+    imageFile.value = null
+    imageError.value = ''
+    previewImage.value = props.product.image
 }
 
 const closeModal = () => {
@@ -111,13 +132,32 @@ const closeModal = () => {
 
 
 const emit = defineEmits<{
-    (e: 'save', updatedProduct: Product): void
+    (e: 'save', updatedProduct: Product, imageFile: File | null): void
 }>();
 
 const form = ref<Product>({ ...props.product });
 
+const handleImageChange = (event: Event) => {
+    const input = event.target as HTMLInputElement
+    const file = input.files?.[0] ?? null
+    imageError.value = ''
+    if (file && (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024)) {
+        imageError.value = file.size > 5 * 1024 * 1024 ? 'Product image must be 5 MB or smaller.' : 'Product image must be a JPG, PNG, or WEBP file.'
+        input.value = ''
+        return
+    }
+    imageFile.value = file
+    previewImage.value = file ? URL.createObjectURL(file) : props.product.image
+}
+
 const handleSubmit = () => {
-    emit('save', form.value);
+    if (imageError.value) return
+    emit('save', { ...form.value, image: previewImage.value }, imageFile.value);
     closeModal();
 };
+
+watch(() => props.product, (product) => {
+    form.value = { ...product }
+    previewImage.value = product.image
+}, { deep: true })
 </script>

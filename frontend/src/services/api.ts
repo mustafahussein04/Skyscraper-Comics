@@ -6,7 +6,7 @@ const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: init?.body instanceof FormData ? undefined : { 'Content-Type': 'application/json' },
     ...init,
   })
   const data = await res.json()
@@ -27,11 +27,26 @@ export const getProducts = (params?: { type?: string; brand?: string; search?: s
 export const getProduct = (id: number) =>
   request<Product>(`/api/products/${id}`)
 
-export const createProduct = (data: Omit<Product, 'id'>) =>
-  request<Product>('/api/products', { method: 'POST', body: JSON.stringify(data) })
+export type ProductFormData = Omit<Product, 'id' | 'image'> & { image?: string; imageFile?: File | null }
 
-export const updateProduct = (id: number, data: Omit<Product, 'id'>) =>
-  request<Product>(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(data) })
+const productForm = (data: ProductFormData) => {
+  const form = new FormData()
+  form.append('name', data.name)
+  form.append('price', String(data.price))
+  form.append('type', data.type)
+  form.append('brand', data.brand)
+  form.append('stock', String(data.stock))
+  form.append('description', data.description)
+  if (data.image) form.append('image', data.image)
+  if (data.imageFile) form.append('productImage', data.imageFile)
+  return form
+}
+
+export const createProduct = (data: ProductFormData) =>
+  request<Product>('/api/products', { method: 'POST', body: productForm(data) })
+
+export const updateProduct = (id: number, data: ProductFormData) =>
+  request<Product>(`/api/products/${id}`, { method: 'PUT', body: productForm(data) })
 
 export const deleteProduct = (id: number) =>
   request<{ success: boolean }>(`/api/products/${id}`, { method: 'DELETE' })

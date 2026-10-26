@@ -8,9 +8,10 @@
       <!-- Left: Product Image -->
       <div>
         <img
-          :src="product.image"
+          :src="product.image || '/images/product/product-01.jpg'"
           :alt="product.name"
           class="w-full rounded-lg shadow-md"
+          @error="($event.target as HTMLImageElement).src = '/images/product/product-01.jpg'"
         />
       </div>
 
