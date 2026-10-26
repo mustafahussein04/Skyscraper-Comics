@@ -229,6 +229,7 @@ import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-n
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 import { getEvents } from '@/services/api'
 import type { AdminEvent } from '@/data/events'
+import { EVENT_CATEGORIES, getCategoryColor as configGetCategoryColor } from '@/config/eventCategories'
 
 const isAdmin = isAdminAuthenticated()
 const showManageModal = ref(false)
@@ -244,10 +245,8 @@ onMounted(async () => {
   }
 })
 
-const categories = [
-  { name: 'Tournament', color: '#b91c1c' },
-  { name: 'Casual Play', color: '#15803d' },
-]
+// SCRUM-167: categories + colors from the shared config (single source of truth)
+const categories = EVENT_CATEGORIES
 
 const selectedCategories = ref<string[]>([])
 
@@ -259,8 +258,8 @@ const toggleCategory = (category: string) => {
   }
 }
 
-const getCategoryColor = (category: string) =>
-  categories.find(item => item.name === category)?.color ?? '#1e3a8a'
+// SCRUM-167: color lookup moved to the shared config (keeps default fallback for old/missing categories)
+const getCategoryColor = (category: string) => configGetCategoryColor(category)
 
 const calendarEvents = computed(() => {
   const source = selectedCategories.value.length === 0
