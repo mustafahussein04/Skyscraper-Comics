@@ -80,10 +80,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 import AppFooter from './AppFooter.vue'
 import { useRoute } from 'vue-router'
+import { initAnalytics, setAnalyticsEnabled, trackPageView } from '@/composables/useAnalytics'
 
 const currentRoute = useRoute()
 const searchQuery = ref('')
+
+// GA4 is only loaded here so admin portal pages (which use a different layout) are never tracked
+initAnalytics()
+setAnalyticsEnabled(true)
+onUnmounted(() => setAnalyticsEnabled(false))
+
+watch(
+  () => currentRoute.fullPath,
+  () => trackPageView(currentRoute.fullPath, document.title),
+  { immediate: true },
+)
 </script>

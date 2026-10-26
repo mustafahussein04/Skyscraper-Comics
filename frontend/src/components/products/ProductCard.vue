@@ -16,7 +16,7 @@
             <div class="flex items-center justify-between">
                 <p class="text-2xl font-bold">${{ product.price.toFixed(2) }}</p>
                 <button
-                    @click="$emit('reserve', product)"
+                    @click="handleReserveClick"
                     :disabled="product.stock === 0"
                     class="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300"
                 >
@@ -31,14 +31,20 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Product } from '@/types/product'
+import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
 
 const props = defineProps<{
   product: Product
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   reserve: [product: Product]
 }>()
+
+const handleReserveClick = () => {
+  trackEvent('reserve_click', productAnalyticsParams(props.product))
+  emit('reserve', props.product)
+}
 
 const getStockColor = (stock: number) => {
   if (stock === 0) return 'bg-red-100 text-red-900'
