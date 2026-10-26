@@ -41,6 +41,7 @@ async function seed(): Promise<void> {
       game TEXT NOT NULL DEFAULT '',
       capacity TEXT NOT NULL DEFAULT '',
       entryFee TEXT NOT NULL DEFAULT '',
+      registrationLink TEXT NOT NULL DEFAULT '',
       image TEXT NOT NULL DEFAULT ''
     );
     CREATE TABLE IF NOT EXISTS reservations (
@@ -52,6 +53,11 @@ async function seed(): Promise<void> {
     );
   `)
 
+  // Upgrade existing databases without changing existing event data.
+  const columns = await client.execute('PRAGMA table_info(events)')
+  if (!columns.rows.some(column => column.name === 'registrationLink')) {
+    await client.execute("ALTER TABLE events ADD COLUMN registrationLink TEXT NOT NULL DEFAULT ''")
+  }
   // Migrate: add new columns if they don't exist yet
   const newCols = [
     'ALTER TABLE reservations ADD COLUMN confirmationNumber TEXT',

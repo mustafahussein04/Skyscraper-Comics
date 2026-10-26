@@ -103,11 +103,17 @@
                   {{ event.extendedProps.description }}
                 </div>
 
-                <button
-                  class="w-full bg-blue-900 text-white font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors"
-                  @click="handleRegisterClick(event)"
+                <a
+                  v-if="event.extendedProps.registrationLink"
+                  :href="event.extendedProps.registrationLink"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block w-full bg-blue-900 text-white text-center font-semibold py-3 rounded-lg hover:bg-blue-800 transition-colors"
                 >
                   Register for Event
+                </a>
+                <button v-else disabled class="w-full bg-gray-100 text-gray-500 font-semibold py-3 rounded-lg cursor-not-allowed">
+                  Registration not available
                 </button>
               </div>
             </div>
@@ -243,6 +249,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-next'
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 import { getEvents } from '@/services/api'
+import { isValidRegistrationLink } from '@/utils/registrationLink'
 import type { AdminEvent } from '@/data/events'
 import { EVENT_CATEGORIES, getCategoryColor as configGetCategoryColor } from '@/config/eventCategories'
 import { trackEvent } from '@/composables/useAnalytics'
@@ -304,6 +311,7 @@ const calendarEvents = computed(() => {
       capacity: e.capacity,
       entryFee: e.entryFee,
       description: e.description,
+      registrationLink: isValidRegistrationLink(e.registrationLink) ? e.registrationLink : '',
     },
   }))
 })
@@ -328,6 +336,7 @@ function toCalendarEvent(e: AdminEvent) {
       capacity: e.capacity,
       entryFee: e.entryFee,
       description: e.description,
+      registrationLink: isValidRegistrationLink(e.registrationLink) ? e.registrationLink : '',
     },
   }
 }
@@ -375,6 +384,9 @@ const calendarOptions = computed(() => ({
   initialView: 'dayGridMonth',
   contentHeight: 680,
   dateClick: handleDateClick,
+  eventClick: (info: { event: { startStr: string } }) => {
+    selectedDate.value = info.event.startStr.slice(0, 10)
+  },
   datesSet: handleDatesSet,
   events: calendarEvents.value,
 }))
