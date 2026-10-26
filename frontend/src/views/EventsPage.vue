@@ -13,13 +13,52 @@
       <!-- Two-column layout: calendar left, upcoming events right -->
       <div class="flex gap-8 items-start">
 
-        <!-- FullCalendar -->
-        <div class="flex-1 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-          <FullCalendar :options="calendarOptions" />
+        <!-- Calendar column: the legend lives inside it, so its right edge aligns with the calendar's -->
+        <div class="flex-1 min-w-0">
+
+          <!-- FullCalendar -->
+          <div class="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+            <FullCalendar :options="calendarOptions" />
+          </div>
+
+          <!-- Category filters -->
+          <div class="mt-5 border border-gray-200 rounded-lg px-5 py-4">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+
+              <span class="text-sm font-semibold text-gray-700">
+                Event Categories:
+              </span>
+
+              <button
+                v-for="category in categories"
+                :key="category.name"
+                type="button"
+                class="flex items-center gap-2 text-sm text-gray-700"
+                @click="toggleCategory(category.name)"
+              >
+                <!-- Colored checkbox -->
+                <span
+                  class="w-4 h-4 rounded-sm flex items-center justify-center flex-shrink-0"
+                  :style="{ backgroundColor: category.color }"
+                >
+                  <Check
+                    v-if="selectedCategories.includes(category.name)"
+                    class="w-3 h-3 text-white"
+                    :stroke-width="3"
+                  />
+                </span>
+
+                <span>{{ category.name }}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- Sidebar: toggles between Upcoming Events and Day Events -->
-        <div class="w-72 flex-shrink-0 border border-gray-200 rounded-lg p-5 overflow-y-auto max-h-[720px]">
+        <!-- Sidebar column: the day/upcoming box, with the admin button beneath it -->
+        <div class="w-72 flex-shrink-0 flex flex-col gap-4">
+
+          <!-- Sidebar: toggles between Upcoming Events and Day Events -->
+          <div class="border border-gray-200 rounded-lg p-5 overflow-y-auto max-h-[720px]">
 
           <!-- Day Events Panel -->
           <template v-if="selectedDate && selectedDayEvents.length > 0">
@@ -74,7 +113,10 @@
             </div>
 
             <div class="text-center mt-6">
-              <button @click="selectedDate = null" class="text-blue-600 text-sm hover:underline">
+              <button
+                @click="selectedDate = null; clearSelectionOutline()"
+                class="text-blue-600 text-sm hover:underline"
+              >
                 View all events
               </button>
             </div>
@@ -99,51 +141,21 @@
               <p v-if="sidebarEvents.length === 0 && !loading" class="text-sm text-gray-400">No upcoming events.</p>
             </div>
           </template>
-        </div>
-      </div>
+          </div>
 
-      <!-- Category filters -->
-      <div class="mt-5 border border-gray-200 rounded-lg px-5 py-4">
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-
-          <span class="text-sm font-semibold text-gray-700">
-            Event Categories:
-          </span>
-
-          <button
-            v-for="category in categories"
-            :key="category.name"
-            type="button"
-            class="flex items-center gap-2 text-sm text-gray-700"
-            @click="toggleCategory(category.name)"
-          >
-            <!-- Colored checkbox -->
-            <span
-              class="w-4 h-4 rounded-sm flex items-center justify-center flex-shrink-0"
-              :style="{ backgroundColor: category.color }"
+          <!-- Admin: Manage Events — its own element under the sidebar box, independent of the two panels -->
+          <div v-if="isAdmin" class="flex justify-center">
+            <button
+              type="button"
+              class="bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
+              @click="showManageModal = true"
             >
-              <Check
-                v-if="selectedCategories.includes(category.name)"
-                class="w-3 h-3 text-white"
-                :stroke-width="3"
-              />
-            </span>
-
-            <span>{{ category.name }}</span>
-          </button>
+              Manage Events
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Admin: Manage Events button -->
-      <div v-if="isAdmin" class="mt-6 flex justify-center">
-        <button
-          type="button"
-          class="bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
-          @click="showManageModal = true"
-        >
-          Manage Events
-        </button>
-      </div>
     </div>
   </div>
 
@@ -232,6 +244,7 @@ import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-n
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 import { getEvents } from '@/services/api'
 import type { AdminEvent } from '@/data/events'
+import { EVENT_CATEGORIES, getCategoryColor as configGetCategoryColor } from '@/config/eventCategories'
 import { trackEvent } from '@/composables/useAnalytics'
 
 const isAdmin = isAdminAuthenticated()
@@ -248,10 +261,8 @@ onMounted(async () => {
   }
 })
 
-const categories = [
-  { name: 'Tournament', color: '#b91c1c' },
-  { name: 'Casual Play', color: '#15803d' },
-]
+// SCRUM-167: categories + colors from the shared config (single source of truth)
+const categories = EVENT_CATEGORIES
 
 const selectedCategories = ref<string[]>([])
 
@@ -264,6 +275,8 @@ const toggleCategory = (category: string) => {
   }
 }
 
+// SCRUM-167: color lookup moved to the shared config (keeps default fallback for old/missing categories)
+const getCategoryColor = (category: string) => configGetCategoryColor(category)
 const handleRegisterClick = (event: ReturnType<typeof toCalendarEvent>) => {
   trackEvent('register_event_click', {
     // "event_name" would clash with GA4's built-in Event name dimension
@@ -327,8 +340,36 @@ const formattedSelectedDate = computed(() => {
   return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 })
 
+// SCRUM-167: one cell outlined at a time — clear the old class, mark the clicked cell.
+// Cells carry a data-date attribute, so they're addressable without holding stale DOM refs.
+const applySelectionOutline = (dateStr: string) => {
+  document.querySelectorAll('.fc-day-selected-cell').forEach(el => el.classList.remove('fc-day-selected-cell'))
+  document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`)?.classList.add('fc-day-selected-cell')
+}
+
+const clearSelectionOutline = () => {
+  document.querySelectorAll('.fc-day-selected-cell').forEach(el => el.classList.remove('fc-day-selected-cell'))
+}
+
 const handleDateClick = (info: any) => {
   selectedDate.value = info.dateStr
+  applySelectionOutline(info.dateStr)
+}
+
+// SCRUM-167 (criterion 4): FullCalendar rebuilds all day cells on month change,
+// wiping the outline class. Re-apply it if the selected date is in the new range;
+// if it isn't, clear the outline (the sidebar also falls back to Upcoming Events).
+const handleDatesSet = (arg: any) => {
+  if (!selectedDate.value) return
+  const start = arg.startStr.slice(0, 10)
+  const end = arg.endStr.slice(0, 10) // exclusive
+  if (selectedDate.value >= start && selectedDate.value < end) {
+    applySelectionOutline(selectedDate.value)
+  } else {
+    // Consistent clear: outline gone AND sidebar returns to Upcoming Events
+    selectedDate.value = null
+    clearSelectionOutline()
+  }
 }
 
 const calendarOptions = computed(() => ({
@@ -336,6 +377,7 @@ const calendarOptions = computed(() => ({
   initialView: 'dayGridMonth',
   contentHeight: 680,
   dateClick: handleDateClick,
+  datesSet: handleDatesSet,
   events: calendarEvents.value,
 }))
 
@@ -412,6 +454,12 @@ const sidebarEvents = computed(() => {
 /* Today highlight */
 :deep(.fc-day-today) {
   background-color: #eff6ff !important;
+}
+
+/* SCRUM-167: selected day cell outline — inset box-shadow so the outline never
+   shifts the cell or the calendar layout (criterion 3) */
+:deep(.fc-day-selected-cell) {
+  box-shadow: inset 0 0 0 2px #1e3a8a;
 }
 
 :deep(.fc-day-today .fc-daygrid-day-number) {
