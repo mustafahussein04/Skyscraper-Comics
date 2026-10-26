@@ -41,16 +41,35 @@ async function seed(): Promise<void> {
       game TEXT NOT NULL DEFAULT '',
       capacity TEXT NOT NULL DEFAULT '',
       entryFee TEXT NOT NULL DEFAULT '',
+      registrationLink TEXT NOT NULL DEFAULT '',
       image TEXT NOT NULL DEFAULT ''
     );
     CREATE TABLE IF NOT EXISTS reservations (
       id TEXT PRIMARY KEY,
       productId INTEGER NOT NULL,
-      userEmail TEXT NOT NULL,
+      userEmail TEXT NOT NULL DEFAULT '',
       reservedAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
     );
   `)
+
+  // Upgrade existing databases without changing existing event data.
+  const columns = await client.execute('PRAGMA table_info(events)')
+  if (!columns.rows.some(column => column.name === 'registrationLink')) {
+    await client.execute("ALTER TABLE events ADD COLUMN registrationLink TEXT NOT NULL DEFAULT ''")
+  }
+  // Migrate: add new columns if they don't exist yet
+  const newCols = [
+    'ALTER TABLE reservations ADD COLUMN confirmationNumber TEXT',
+    'ALTER TABLE reservations ADD COLUMN firstName TEXT',
+    'ALTER TABLE reservations ADD COLUMN lastName TEXT',
+    'ALTER TABLE reservations ADD COLUMN phoneNumber TEXT',
+    'ALTER TABLE reservations ADD COLUMN expiresAt TEXT',
+    "ALTER TABLE reservations ADD COLUMN status TEXT DEFAULT 'Active'",
+  ]
+  for (const sql of newCols) {
+    try { await client.execute(sql) } catch { /* column already exists */ }
+  }
 
   const pc = await client.execute('SELECT COUNT(*) as count FROM products')
   if ((pc.rows[0][0] as number) === 0) {
