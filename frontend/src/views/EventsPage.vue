@@ -331,11 +331,28 @@ const handleDateClick = (info: any) => {
   applySelectionOutline(info.dateStr)
 }
 
+// SCRUM-167 (criterion 4): FullCalendar rebuilds all day cells on month change,
+// wiping the outline class. Re-apply it if the selected date is in the new range;
+// if it isn't, clear the outline (the sidebar also falls back to Upcoming Events).
+const handleDatesSet = (arg: any) => {
+  if (!selectedDate.value) return
+  const start = arg.startStr.slice(0, 10)
+  const end = arg.endStr.slice(0, 10) // exclusive
+  if (selectedDate.value >= start && selectedDate.value < end) {
+    applySelectionOutline(selectedDate.value)
+  } else {
+    // Consistent clear: outline gone AND sidebar returns to Upcoming Events
+    selectedDate.value = null
+    clearSelectionOutline()
+  }
+}
+
 const calendarOptions = computed(() => ({
   plugins: [dayGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
   contentHeight: 680,
   dateClick: handleDateClick,
+  datesSet: handleDatesSet,
   events: calendarEvents.value,
 }))
 
