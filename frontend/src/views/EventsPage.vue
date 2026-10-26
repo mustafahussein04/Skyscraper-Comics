@@ -54,8 +54,11 @@
           </div>
         </div>
 
-        <!-- Sidebar: toggles between Upcoming Events and Day Events -->
-        <div class="w-72 flex-shrink-0 border border-gray-200 rounded-lg p-5 overflow-y-auto max-h-[720px]">
+        <!-- Sidebar column: the day/upcoming box, with the admin button beneath it -->
+        <div class="w-72 flex-shrink-0 flex flex-col gap-4">
+
+          <!-- Sidebar: toggles between Upcoming Events and Day Events -->
+          <div class="border border-gray-200 rounded-lg p-5 overflow-y-auto max-h-[720px]">
 
           <!-- Day Events Panel -->
           <template v-if="selectedDate && selectedDayEvents.length > 0">
@@ -135,19 +138,21 @@
               <p v-if="sidebarEvents.length === 0 && !loading" class="text-sm text-gray-400">No upcoming events.</p>
             </div>
           </template>
+          </div>
+
+          <!-- Admin: Manage Events — its own element under the sidebar box, independent of the two panels -->
+          <div v-if="isAdmin" class="flex justify-center">
+            <button
+              type="button"
+              class="bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
+              @click="showManageModal = true"
+            >
+              Manage Events
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Admin: Manage Events button -->
-      <div v-if="isAdmin" class="mt-6 flex justify-center">
-        <button
-          type="button"
-          class="bg-blue-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
-          @click="showManageModal = true"
-        >
-          Manage Events
-        </button>
-      </div>
     </div>
   </div>
 
