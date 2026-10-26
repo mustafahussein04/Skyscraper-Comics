@@ -4,6 +4,21 @@
         <h1 class="text-4xl font-bold mb-2">Our Products</h1>
         <p class="text-gray-600 mb-8">Browse our extensive collection of comics and trading card games.</p>
 
+        <p
+            v-if="reservationMessage"
+            role="status"
+            class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-green-900"
+        >
+            {{ reservationMessage }}
+        </p>
+        <p
+            v-if="reservationError"
+            role="alert"
+            class="mb-6 rounded-lg bg-red-100 px-4 py-3 text-red-900"
+        >
+            {{ reservationError }}
+        </p>
+
         <!-- Search Bar and Filters -->
         <div class="mb-8 bg-white rounded-lg shadow-sm">
             <div class="px-6 py-4 flex flex-col">
@@ -110,7 +125,8 @@
             <ProductCard
                 v-for="Product in filteredProducts"
                 :key="Product.id"
-                :product="Product" />
+                :product="Product"
+                @reserve="handleReserve" />
         </div>
     </div>
 </template>
@@ -121,6 +137,8 @@ import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/services/api'
+import { getCurrentUserEmail, reserveProduct } from '@/composables/useReservations'
+import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
 
 const route = useRoute()
 const router = useRouter()
@@ -181,5 +199,24 @@ const filteredProducts = computed(() => {
         return matchesType && matchesBrand && matchesSearch
     })
 })
+
+const reservationMessage = ref('')
+const reservationError = ref('')
+
+const handleReserve = async (product: Product) => {
+    reservationMessage.value = ''
+    reservationError.value = ''
+
+    const result = await reserveProduct(product, getCurrentUserEmail())
+    product.stock = result.stock
+
+    if (!result.success) {
+        reservationError.value = result.message
+        return
+    }
+
+    reservationMessage.value = result.message
+    trackEvent('reservation_completed', productAnalyticsParams(product))
+}
 
 </script>
