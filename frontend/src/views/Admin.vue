@@ -33,10 +33,6 @@
             Sign in with your administrator credentials. This area is for authorized staff only.
           </p>
 
-          <p class="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Demo credentials: <strong>admin@skyscrapercomics.com</strong> / <strong>admin123</strong>
-          </p>
-
           <p v-if="loginError" role="alert" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
             {{ loginError }}
           </p>

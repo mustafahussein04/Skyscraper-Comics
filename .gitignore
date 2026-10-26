@@ -137,3 +137,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Local dev database (auto-created and seeded by backend/lib/db.ts)
+backend/data/
