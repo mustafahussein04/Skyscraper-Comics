@@ -13,9 +13,45 @@
       <!-- Two-column layout: calendar left, upcoming events right -->
       <div class="flex gap-8 items-start">
 
-        <!-- FullCalendar -->
-        <div class="flex-1 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-          <FullCalendar :options="calendarOptions" />
+        <!-- Calendar column: the legend lives inside it, so its right edge aligns with the calendar's -->
+        <div class="flex-1 min-w-0">
+
+          <!-- FullCalendar -->
+          <div class="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+            <FullCalendar :options="calendarOptions" />
+          </div>
+
+          <!-- Category filters -->
+          <div class="mt-5 border border-gray-200 rounded-lg px-5 py-4">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+
+              <span class="text-sm font-semibold text-gray-700">
+                Event Categories:
+              </span>
+
+              <button
+                v-for="category in categories"
+                :key="category.name"
+                type="button"
+                class="flex items-center gap-2 text-sm text-gray-700"
+                @click="toggleCategory(category.name)"
+              >
+                <!-- Colored checkbox -->
+                <span
+                  class="w-4 h-4 rounded-sm flex items-center justify-center flex-shrink-0"
+                  :style="{ backgroundColor: category.color }"
+                >
+                  <Check
+                    v-if="selectedCategories.includes(category.name)"
+                    class="w-3 h-3 text-white"
+                    :stroke-width="3"
+                  />
+                </span>
+
+                <span>{{ category.name }}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Sidebar: toggles between Upcoming Events and Day Events -->
@@ -99,38 +135,6 @@
               <p v-if="sidebarEvents.length === 0 && !loading" class="text-sm text-gray-400">No upcoming events.</p>
             </div>
           </template>
-        </div>
-      </div>
-
-      <!-- Category filters -->
-      <div class="mt-5 border border-gray-200 rounded-lg px-5 py-4">
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
-
-          <span class="text-sm font-semibold text-gray-700">
-            Event Categories:
-          </span>
-
-          <button
-            v-for="category in categories"
-            :key="category.name"
-            type="button"
-            class="flex items-center gap-2 text-sm text-gray-700"
-            @click="toggleCategory(category.name)"
-          >
-            <!-- Colored checkbox -->
-            <span
-              class="w-4 h-4 rounded-sm flex items-center justify-center flex-shrink-0"
-              :style="{ backgroundColor: category.color }"
-            >
-              <Check
-                v-if="selectedCategories.includes(category.name)"
-                class="w-3 h-3 text-white"
-                :stroke-width="3"
-              />
-            </span>
-
-            <span>{{ category.name }}</span>
-          </button>
         </div>
       </div>
 
