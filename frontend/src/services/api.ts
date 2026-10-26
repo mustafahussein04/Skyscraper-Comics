@@ -52,16 +52,21 @@ export const deleteEvent = (id: number) =>
 
 // ── Reservations ──────────────────────────────────────────────────────────────
 
-export const getReservations = (email?: string) => {
-  const qs = email ? `?email=${encodeURIComponent(email)}` : ''
+export const getReservations = (search?: string) => {
+  const qs = search ? `?search=${encodeURIComponent(search)}` : ''
   return request<Reservation[]>(`/api/reservations${qs}`)
 }
 
-export const createReservation = (productId: number, userEmail: string) =>
-  request<{ success: boolean; message: string; stock: number }>('/api/reservations', {
-    method: 'POST',
-    body: JSON.stringify({ productId, userEmail }),
-  })
+export const createReservation = (data: {
+  productId: number
+  firstName: string
+  lastName: string
+  phoneNumber: string
+}) =>
+  request<{ success: boolean; message?: string; confirmationNumber: string; productName: string; expiresAt: string }>(
+    '/api/reservations',
+    { method: 'POST', body: JSON.stringify(data) }
+  )
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 

@@ -46,11 +46,24 @@ async function seed(): Promise<void> {
     CREATE TABLE IF NOT EXISTS reservations (
       id TEXT PRIMARY KEY,
       productId INTEGER NOT NULL,
-      userEmail TEXT NOT NULL,
+      userEmail TEXT NOT NULL DEFAULT '',
       reservedAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
     );
   `)
+
+  // Migrate: add new columns if they don't exist yet
+  const newCols = [
+    'ALTER TABLE reservations ADD COLUMN confirmationNumber TEXT',
+    'ALTER TABLE reservations ADD COLUMN firstName TEXT',
+    'ALTER TABLE reservations ADD COLUMN lastName TEXT',
+    'ALTER TABLE reservations ADD COLUMN phoneNumber TEXT',
+    'ALTER TABLE reservations ADD COLUMN expiresAt TEXT',
+    "ALTER TABLE reservations ADD COLUMN status TEXT DEFAULT 'Active'",
+  ]
+  for (const sql of newCols) {
+    try { await client.execute(sql) } catch { /* column already exists */ }
+  }
 
   const pc = await client.execute('SELECT COUNT(*) as count FROM products')
   if ((pc.rows[0][0] as number) === 0) {
