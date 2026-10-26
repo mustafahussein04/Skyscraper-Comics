@@ -71,7 +71,10 @@
             </div>
 
             <div class="text-center mt-6">
-              <button @click="selectedDate = null" class="text-blue-600 text-sm hover:underline">
+              <button
+                @click="selectedDate = null; clearSelectionOutline()"
+                class="text-blue-600 text-sm hover:underline"
+              >
                 View all events
               </button>
             </div>
@@ -312,8 +315,20 @@ const formattedSelectedDate = computed(() => {
   return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 })
 
+// SCRUM-167: one cell outlined at a time — clear the old class, mark the clicked cell.
+// Cells carry a data-date attribute, so they're addressable without holding stale DOM refs.
+const applySelectionOutline = (dateStr: string) => {
+  document.querySelectorAll('.fc-day-selected-cell').forEach(el => el.classList.remove('fc-day-selected-cell'))
+  document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`)?.classList.add('fc-day-selected-cell')
+}
+
+const clearSelectionOutline = () => {
+  document.querySelectorAll('.fc-day-selected-cell').forEach(el => el.classList.remove('fc-day-selected-cell'))
+}
+
 const handleDateClick = (info: any) => {
   selectedDate.value = info.dateStr
+  applySelectionOutline(info.dateStr)
 }
 
 const calendarOptions = computed(() => ({
@@ -397,6 +412,12 @@ const sidebarEvents = computed(() => {
 /* Today highlight */
 :deep(.fc-day-today) {
   background-color: #eff6ff !important;
+}
+
+/* SCRUM-167: selected day cell outline — inset box-shadow so the outline never
+   shifts the cell or the calendar layout (criterion 3) */
+:deep(.fc-day-selected-cell) {
+  box-shadow: inset 0 0 0 2px #1e3a8a;
 }
 
 :deep(.fc-day-today .fc-daygrid-day-number) {
