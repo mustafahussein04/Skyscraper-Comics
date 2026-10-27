@@ -5,10 +5,10 @@
     @click.self="$emit('close')"
   >
     <!-- Floating centered edit window -->
-    <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+    <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
       <div class="flex items-start justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-widest text-violet-600">Edit event</p>
+          <p class="text-xs font-semibold uppercase tracking-widest text-violet-600">{{ draft.id === 0 ? 'Add event' : 'Edit event' }}</p>
           <h3 class="mt-1 text-xl font-bold text-gray-900">{{ draft.title }}</h3>
         </div>
         <button
@@ -21,7 +21,7 @@
         </button>
       </div>
 
-      <form class="mt-5 space-y-4" @submit.prevent="save">
+      <form novalidate class="mt-5 space-y-4" @submit.prevent="save">
         <div>
           <label class="block text-sm font-medium text-gray-700" for="edit-title">Title</label>
           <input
@@ -114,6 +114,25 @@
           ></textarea>
         </div>
 
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="edit-registration-link">Registration Link</label>
+          <input
+            id="edit-registration-link"
+            v-model="draft.registrationLink"
+            type="url"
+            placeholder="https://example.com/register"
+            :aria-invalid="Boolean(registrationLinkError)"
+            :aria-describedby="registrationLinkError ? 'registration-link-error' : 'registration-link-help'"
+            class="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-900"
+          />
+          <p v-if="registrationLinkError" id="registration-link-error" role="alert" class="mt-1 text-sm text-red-600">
+            {{ registrationLinkError }}
+          </p>
+          <p v-else id="registration-link-help" class="mt-1 text-sm text-gray-500">
+            Optional. Use a URL starting with http:// or https://.
+          </p>
+        </div>
+
         <div class="flex justify-end gap-2 pt-2">
           <button
             type="button"
@@ -126,8 +145,7 @@
             type="submit"
             class="rounded-lg bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800"
           >
-            <!-- SCRUM-87: "Update Event" on edit; create-mode modal keeps an accurate label -->
-            {{ isNew ? 'Create Event' : 'Update Event' }}
+            {{ draft.id === 0 ? 'Add Event' : 'Save Changes' }}
           </button>
         </div>
       </form>
@@ -138,6 +156,7 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue'
 import { X } from 'lucide-vue-next'
+import { isValidRegistrationLink } from '@/utils/registrationLink'
 import type { AdminEvent } from '@/data/events'
 import { EVENT_CATEGORIES } from '@/config/eventCategories'
 
@@ -151,7 +170,12 @@ const emit = defineEmits<{
 }>()
 
 // Work on a draft copy — Cancel discards, Save writes back
-const draft = reactive({ ...props.event })
+const draft = reactive({ ...props.event, registrationLink: props.event.registrationLink ?? '' })
+const registrationLinkError = computed(() =>
+  isValidRegistrationLink(draft.registrationLink)
+    ? ''
+    : 'Enter a valid URL starting with http:// or https://.',
+)
 
 // SCRUM-87: id === 0 means the page opened this modal in "add new" mode
 const isNew = computed(() => props.event.id === 0)
@@ -162,6 +186,7 @@ const hasLegacyCategory = computed(() =>
 )
 
 const save = () => {
+  if (registrationLinkError.value) return
   emit('save', { ...draft })
 }
 </script>

@@ -8,6 +8,7 @@ export interface AdminEvent {
   game: string
   capacity: string
   entryFee: string
+  registrationLink?: string | null
   image?: string
 }
 

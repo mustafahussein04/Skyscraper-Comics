@@ -40,6 +40,7 @@ const router = createRouter({
           name: 'Products',
           component: () => import('../views/ProductsView.vue'),
           props: {},
+          meta: { title: 'Products' },
         },
       ],
     },
@@ -191,11 +192,7 @@ const router = createRouter({
         {
           path: 'orders',
           name: 'Admin Orders',
-          component: () => import('../views/admin/AdminSectionPage.vue'),
-          props: {
-            title: 'Orders',
-            description: 'Review and manage customer orders from this area.',
-          },
+          component: () => import('../views/admin/AdminOrdersPage.vue'),
           meta: { title: 'Orders' },
         },
         {
@@ -230,7 +227,15 @@ const router = createRouter({
 export default router
 
 router.beforeEach((to) => {
-  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
+  const isAdmin = to.path.startsWith('/admin')
+  const pageTitle = to.meta.title as string | undefined
+  if (!pageTitle || to.name === 'Home') {
+    document.title = 'Skyscraper Comics'
+  } else if (isAdmin) {
+    document.title = `${pageTitle} | Skyscraper Comics Admin`
+  } else {
+    document.title = `${pageTitle} | Skyscraper Comics`
+  }
 
   const authenticated = isAdminAuthenticated()
   const requiresAdmin = to.matched.some((routeRecord) => routeRecord.meta.requiresAdmin)
