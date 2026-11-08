@@ -1,4 +1,4 @@
-/** Empty links are allowed; supplied links must be absolute HTTP(S) URLs. */
+/** Empty links are allowed; supplied links must be HTTP(S) URLs. */
 export function isValidRegistrationLink(value: unknown): value is string {
   if (typeof value !== 'string') return false
   if (value === '') return true
