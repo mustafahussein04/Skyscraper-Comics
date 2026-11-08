@@ -1,0 +1,11 @@
+{
+  "name": "skyscraper-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test --concurrency 1 *.e2e.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.27.0"
+  }
+}
