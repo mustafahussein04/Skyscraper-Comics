@@ -1,11 +1,11 @@
 <template>
     <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <img
-            :src="product.image || '/images/product/product-01.jpg'"
+        <ProductImage
+            :src="product.image"
             :alt="product.name"
-            class="w-full h-64 object-cover mb-4"
-            @error="($event.target as HTMLImageElement).src = '/images/product/product-01.jpg'"
-        >
+            img-class="w-full h-64 object-cover mb-4"
+            placeholder-class="w-full h-64 mb-4 rounded"
+        />
         <div>
             <div class="flex items-center justify-between">
                 <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">{{ getBrandLabel(product.brand) }}</p>
@@ -37,6 +37,7 @@
 import { ref } from 'vue'
 import type { Product } from '@/types/product'
 import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
+import ProductImage from './ProductImage.vue'
 
 const props = defineProps<{
   product: Product
