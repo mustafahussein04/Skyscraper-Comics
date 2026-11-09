@@ -1,7 +1,7 @@
 # SCRUM-175 — Admin Events & Public Events Page — firefox
 
-Run date: 2026-11-09T04:59:54.618Z
-Events created by this run use the title prefix `E2E-175-mw8skoox` and are deleted afterwards.
+Run date: 2026-11-09T06:01:05.830Z
+Events created by this run use the title prefix `E2E-175-mw8urfty` and are deleted afterwards.
 
 | Test | Status | Screenshot |
 |---|---|---|

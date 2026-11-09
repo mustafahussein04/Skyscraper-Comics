@@ -225,7 +225,7 @@ async function setDate(driver, id, isoDate) {
 }
 
 async function openCreateModal(driver) {
-  await driver.findElement(By.xpath("//button[normalize-space()='Add new Event']")).click()
+  await clickWhenReady(driver, By.xpath("//button[normalize-space()='Add new Event']"))
   await driver.wait(until.elementLocated(By.id('edit-title')), 10000)
 }
 
@@ -257,11 +257,37 @@ async function createEventViaUI(driver, spec) {
   await driver.wait(async () => (await driver.findElements(By.id('edit-title'))).length === 0, 10000)
 }
 
+/**
+ * Click something the list may re-render out from under us. Selenium hands back a handle, the
+ * Vue list re-renders (a fetch resolving, an item being removed) and the click throws
+ * "stale element reference" — re-find and retry instead of failing the case.
+ */
+async function clickWhenReady(driver, locator, timeout = 10000) {
+  const deadline = Date.now() + timeout
+  let lastError
+  while (Date.now() < deadline) {
+    try {
+      const element = await driver.wait(until.elementLocated(locator), timeout)
+      await element.click()
+      return
+    } catch (error) {
+      lastError = error
+      if (!/stale element|not attached|no such element/i.test(error.message)) throw error
+      await driver.sleep(150)
+    }
+  }
+  throw lastError
+}
+
+/**
+ * Read the admin list titles in one shot. Reading them element-by-element leaves a window where
+ * the list re-renders (e.g. right after a delete) and the remaining handles go stale — Firefox
+ * hits that far more often than Chrome.
+ */
 async function adminTitles(driver) {
-  const headings = await driver.findElements(By.css('article h3'))
-  const titles = []
-  for (const heading of headings) titles.push((await heading.getText()).trim())
-  return titles
+  return driver.executeScript(`
+    return Array.from(document.querySelectorAll('article h3')).map(el => el.textContent.trim())
+  `)
 }
 
 /** Clicks the public calendar cell for a date, paging forward when the date is in a later month. */
@@ -294,7 +320,7 @@ async function publicUpcomingTitles(driver) {
 }
 
 async function deleteViaUI(driver, title) {
-  await driver.findElement(By.css(`button[aria-label="Delete ${title}"]`)).click()
+  await clickWhenReady(driver, By.css(`button[aria-label="Delete ${title}"]`))
   await driver.wait(until.alertIsPresent(), 5000)
   await driver.switchTo().alert().accept()
   await driver.wait(async () => !(await adminTitles(driver)).includes(title), 10000)
@@ -438,7 +464,7 @@ async function main() {
       const spec = eventSpec('edit', { date: isoDaysFromNow(31) })
       await createEventViaUI(driver, spec)
       const moved = { ...spec, date: isoDaysFromNow(33), time: '6:00 PM - 9:00 PM' }
-      await driver.findElement(By.css(`button[aria-label="Edit ${spec.title}"]`)).click()
+      await clickWhenReady(driver, By.css(`button[aria-label="Edit ${spec.title}"]`))
       await driver.wait(until.elementLocated(By.id('edit-title')), 10000)
       await setDate(driver, 'edit-date', moved.date)
       await setText(driver, 'edit-time', moved.time)
