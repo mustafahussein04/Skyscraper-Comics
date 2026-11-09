@@ -174,7 +174,7 @@ const draft = reactive({ ...props.event, registrationLink: props.event.registrat
 const registrationLinkError = computed(() =>
   isValidRegistrationLink(draft.registrationLink)
     ? ''
-    : 'Enter a valid URL starting with http:// or https://.',
+    : 'Enter a valid Registration Link starting with http:// or https://.',
 )
 
 // SCRUM-87: id === 0 means the page opened this modal in "add new" mode
