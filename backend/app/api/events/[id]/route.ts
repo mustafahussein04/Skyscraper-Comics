@@ -39,7 +39,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
 
   await db.execute({
     sql: 'UPDATE events SET title=?, description=?, date=?, category=?, time=?, game=?, capacity=?, entryFee=?, image=?, registrationLink=? WHERE id=?',
-    args: [title, description ?? '', date, category ?? '', time ?? '', game ?? '', capacity ?? '', entryFee ?? '', image ?? '', link, params.id],
+    args: [title, description ?? '', date, category ?? '', time ?? '', game ?? '', capacity ?? '', entryFee ?? '', image ?? '', link, id],
   })
 
   const updated = toObject(await db.execute({ sql: 'SELECT * FROM events WHERE id = ?', args: [id] }))

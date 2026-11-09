@@ -134,6 +134,7 @@ import ProductCard from '@/components/products/ProductCard.vue'
 import ReserveModal from '@/components/products/ReserveModal.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getProducts } from '@/services/api'
+import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
 
 const route = useRoute()
 const router = useRouter()
@@ -201,5 +202,6 @@ const filteredProducts = computed(() => {
         return matchesType && matchesBrand && matchesSearch
     })
 })
+
 
 </script>

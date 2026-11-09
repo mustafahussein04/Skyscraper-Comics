@@ -8,6 +8,15 @@ const ts = require('typescript')
 const { createClient } = require('@libsql/client')
 const { NextRequest } = require('next/server')
 
+function cleanupFixture(fixture) {
+  try {
+    fs.rmSync(fixture, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
+  } catch (error) {
+    // Windows can retain SQLite handles briefly after close; cleanup is best effort.
+    if (error.code !== 'EPERM' && error.code !== 'EBUSY') throw error
+  }
+}
+
 const backend = path.resolve(__dirname, '..')
 const modules = new Map()
 // Load the application's TypeScript and @/ aliases without adding a test dependency.
@@ -41,6 +50,32 @@ test('frontend and backend accept only optional absolute HTTP(S) registration li
       ' https://example.com', 'https://example.com/a b']) {
       assert.equal(isValidRegistrationLink(value), false, String(value))
     }
+  }
+})
+
+test('admin login accepts valid credentials and rejects invalid credentials uniformly', async () => {
+  const { POST } = loadTS(path.join(backend, 'app/api/auth/login/route.ts'))
+  const request = (email, password) => new NextRequest('http://localhost/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+    headers: { 'Content-Type': 'application/json', Origin: 'http://127.0.0.1:5173' },
+  })
+
+  const validResponse = await POST(request('admin@skyscrapercomics.com', 'admin123'))
+  assert.equal(validResponse.status, 200)
+  assert.equal(validResponse.headers.get('Access-Control-Allow-Origin'), 'http://127.0.0.1:5173')
+  for (const credentials of [
+    ['admin@skyscrapercomics.com', 'wrong-password'],
+    ['wrong@example.com', 'admin123'],
+    ['', ''],
+  ]) {
+    const response = await POST(request(...credentials))
+    assert.equal(response.status, 401)
+    assert.equal(response.headers.get('Access-Control-Allow-Origin'), 'http://127.0.0.1:5173')
+    assert.deepEqual(await response.json(), {
+      success: false,
+      error: 'Invalid email or password.',
+    })
   }
 })
 
@@ -114,8 +149,9 @@ test('legacy database migration and event registration API persistence', async (
     db?.close()
     delete global._dbReady
     delete global._dbClient
+    modules.delete(path.join(backend, 'lib/db.ts'))
     process.chdir(originalCwd)
-    fs.rmSync(fixture, { recursive: true, force: true })
+    cleanupFixture(fixture)
   }
 })
 
@@ -138,7 +174,8 @@ test('new databases start with no placeholder products or events', async () => {
     db?.close()
     delete global._dbReady
     delete global._dbClient
+    modules.delete(path.join(backend, 'lib/db.ts'))
     process.chdir(originalCwd)
-    fs.rmSync(fixture, { recursive: true, force: true })
+    cleanupFixture(fixture)
   }
 })
