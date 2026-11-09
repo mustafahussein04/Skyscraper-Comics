@@ -156,7 +156,7 @@ test('legacy database migration and event registration API persistence', async (
 })
 
 
-test('new databases seed events with registration unavailable', async () => {
+test('new databases start with no placeholder products or events', async () => {
   const originalCwd = process.cwd()
   const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'skyscraper-new-events-'))
   process.chdir(fixture)
@@ -164,9 +164,12 @@ test('new databases seed events with registration unavailable', async () => {
   let db
   try {
     db = await loadTS(path.join(backend, 'lib/db.ts')).getClient()
-    const result = await db.execute('SELECT registrationLink FROM events')
-    assert.ok(result.rows.length > 0)
-    assert.ok(result.rows.every(row => row.registrationLink === ''))
+    const products = await db.execute('SELECT COUNT(*) AS count FROM products')
+    const events = await db.execute('SELECT COUNT(*) AS count FROM events')
+    assert.equal(Number(products.rows[0].count), 0)
+    assert.equal(Number(events.rows[0].count), 0)
+    const columns = await db.execute('PRAGMA table_info(events)')
+    assert.ok(columns.rows.some(column => column.name === 'registrationLink'))
   } finally {
     db?.close()
     delete global._dbReady

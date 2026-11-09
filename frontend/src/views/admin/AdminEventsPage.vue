@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 import AdminEventEditModal from '@/components/admin/AdminEventEditModal.vue'
 import { getEvents, createEvent, updateEvent, deleteEvent as apiDeleteEvent } from '@/services/api'
 

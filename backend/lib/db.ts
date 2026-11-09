@@ -19,7 +19,7 @@ function makeClient(): Client {
 const client: Client = global._dbClient ?? makeClient()
 if (process.env.NODE_ENV !== 'production') global._dbClient = client
 
-async function seed(): Promise<void> {
+async function initSchema(): Promise<void> {
   await client.executeMultiple(`
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,35 +70,12 @@ async function seed(): Promise<void> {
   for (const sql of newCols) {
     try { await client.execute(sql) } catch { /* column already exists */ }
   }
-
-  const pc = await client.execute('SELECT COUNT(*) as count FROM products')
-  if ((pc.rows[0][0] as number) === 0) {
-    const ins = 'INSERT INTO products (name, price, type, brand, stock, description, image) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    await client.batch([
-      { sql: ins, args: ['Amazing Spider-Man #50', 4.99, 'comics', 'Marvel', 25, 'Classic Spider-Man issue.', '/images/spiderman.jpg'] },
-      { sql: ins, args: ['Batman: The Dark Knight Returns', 14.99, 'comics', 'DC', 4, 'Classic Batman issue.', '/images/batman.jpg'] },
-      { sql: ins, args: ['A really long name for a product that you should buy right now', 249.99, 'comics', 'Marvel', 0, 'The most important comic book in the history of comics.', '/images/doesnt-exist.jpg'] },
-      { sql: ins, args: ['Hellboy #1', 4.99, 'comics', 'Dark Horse', 0, 'A classic issue of Hellboy.', '/images/hellboy-1.jpg'] },
-      { sql: ins, args: ['Blue-Eyes White Dragon', 64.99, 'tcg', 'Yu-Gi-Oh!', 1, 'A classic card from Yu-Gi-Oh!.', '/images/blue-eyes-white-dragon.jpg'] },
-      { sql: ins, args: ['Charizard', 64.99, 'tcg', 'Pokemon', 1, 'A classic card from Pokemon.', '/images/charizard.jpg'] },
-    ], 'write')
-  }
-
-  const ec = await client.execute('SELECT COUNT(*) as count FROM events')
-  if ((ec.rows[0][0] as number) === 0) {
-    const ins = 'INSERT INTO events (title, description, date, category, time, game, capacity, entryFee, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    await client.batch([
-      { sql: ins, args: ['Magic Commander Night', 'Standard format tournament with prizes for top finishers.', '2026-10-15', 'Tournament', '7:00 PM - 10:00 PM', 'Magic: The Gathering', '32 players', '$5', ''] },
-      { sql: ins, args: ['Pokemon League', 'Casual Pokemon play for all skill levels. Bring your own deck!', '2026-10-18', 'Casual Play', '2:00 PM - 5:00 PM', 'Pokemon TCG', '20 players', 'Free', ''] },
-      { sql: ins, args: ["Yu-Gi-Oh! Regional Qualifier", 'Regional qualifier tournament for competitive players.', '2026-10-25', 'Tournament', '12:00 PM - 8:00 PM', "Yu-Gi-Oh!", '64 players', '$20', ''] },
-      { sql: ins, args: ['Board Game Open Night', 'Try new arrivals from the shelf or bring your own. All are welcome.', '2026-10-30', 'Casual Play', '5:00 PM - 9:00 PM', 'Board Games', '40 players', 'Free', ''] },
-    ], 'write')
-  }
+  // New databases start empty: products and events are added through the admin portal.
 }
 
 // Lazily initialize once; reuse the same promise on hot reloads
 function getReadyPromise(): Promise<void> {
-  if (!global._dbReady) global._dbReady = seed()
+  if (!global._dbReady) global._dbReady = initSchema()
   return global._dbReady
 }
 
