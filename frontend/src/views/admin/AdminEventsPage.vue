@@ -19,6 +19,10 @@
       </button>
     </div>
 
+    <p v-if="successMessage" role="status" class="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+      {{ successMessage }}
+    </p>
+
     <p v-if="errorMessage" role="alert" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
       {{ errorMessage }}
     </p>
@@ -96,17 +100,15 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import { Pencil, Plus, Trash2 } from 'lucide-vue-next'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 import AdminEventEditModal from '@/components/admin/AdminEventEditModal.vue'
 import { getEvents, createEvent, updateEvent, deleteEvent as apiDeleteEvent } from '@/services/api'
 
 const loading = ref(true)
 const errorMessage = ref('')
+const successMessage = ref('')
 const events = ref<AdminEvent[]>([])
 
-onMounted(async () => {
-  events.value = await getEvents()
-})
 const editingEvent = ref<AdminEvent | null>(null)
 const addingEvent = ref(false)
 
@@ -130,6 +132,7 @@ const blankEvent = (): AdminEvent => ({
   game: '',
   capacity: '',
   entryFee: '',
+  registrationLink: '',
 })
 
 const getLocalToday = () => {
@@ -184,38 +187,10 @@ const upcomingEvents = computed(() => {
     .sort((a, b) => a.date.localeCompare(b.date))
 })
 
-const handleModalSave = async (updated: AdminEvent) => {
-  errorMessage.value = ''
-
-  const validationError = validateEvent(updated)
-  if (validationError) {
-    errorMessage.value = validationError
-    return
-  }
-
-  try {
-    if (updated.id === 0) {
-      const { id: _id, ...data } = updated
-      const created = await createEvent(data)
-      events.value.push(created)
-      addingEvent.value = false
-    } else {
-      const { id, ...data } = updated
-      const saved = await updateEvent(id, data)
-      events.value = events.value.map(event =>
-        event.id === saved.id ? saved : event
-      )
-      editingEvent.value = null
-    }
-  } catch (err) {
-    errorMessage.value = err instanceof Error
-      ? err.message
-      : 'Failed to save event.'
-  }
-}
-
 const handleDelete = async (event: AdminEvent) => {
   if (!window.confirm(`Delete "${event.title}"? This cannot be undone.`)) return
+  errorMessage.value = ''
+  successMessage.value = ''
   try {
     await apiDeleteEvent(event.id)
     events.value = events.value.filter(e => e.id !== event.id)
@@ -224,6 +199,33 @@ const handleDelete = async (event: AdminEvent) => {
   }
 }
 
+const handleModalSave = async (updated: AdminEvent) => {
+  errorMessage.value = ''
+  successMessage.value = ''
+  try {
+    if (updated.id === 0) {
+      const { id: _id, ...data } = updated
+      const created = await createEvent(data)
+      events.value.push(created)
+      addingEvent.value = false
+      // SCRUM-87: success confirmation, list updates immediately above
+      successMessage.value = `Event "${created.title}" created.`
+    } else {
+      const { id, ...data } = updated
+      const saved = await updateEvent(id, data)
+      events.value = events.value.map(event =>
+        event.id === saved.id ? saved : event
+      )
+      editingEvent.value = null
+      // SCRUM-87: success confirmation, updated event appears in the list below
+      successMessage.value = `Event "${saved.title}" updated.`
+    }
+  } catch (err) {
+    errorMessage.value = err instanceof Error
+      ? err.message
+      : 'Failed to save event.'
+  }
+}
 
 const formatEventDate = (iso: string) => {
   const date = new Date(iso + 'T00:00:00')

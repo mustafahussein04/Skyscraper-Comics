@@ -1,44 +1,54 @@
 <template>
     <div class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <img :src="product.image" :alt="product.name" class="w-full h-64 object-cover mb-4">
-        <div>
+        <router-link :to="`/products/${product.id}`" class="block">
+            <img
+                :src="product.image || '/images/product/product-01.jpg'"
+                :alt="product.name"
+                class="w-full h-64 object-cover mb-4"
+                @error="($event.target as HTMLImageElement).src = '/images/product/product-01.jpg'"
+            >
             <div class="flex items-center justify-between">
                 <p class="text-sm mb-1 bg-blue-100 text-blue-900 px-2 py-1 rounded capitalize">{{ getBrandLabel(product.brand) }}</p>
-                <p class="text-sm mb-1 px-2 py-1 rounded" 
+                <p class="text-sm mb-1 px-2 py-1 rounded"
                     :class="getStockColor(product.stock)"
                 >
                     {{ getStockLabel(product.stock) }}
                 </p>
-                
             </div>
-            <h3 class="text-xl font-bold mb-2 h-20px sm:h-32px md:h-48px lg:h-64px xl:h-80px line-clamp-2 h-[3em]">{{ product.name }}</h3>
+            <h3 class="text-xl font-bold mb-2 line-clamp-2 h-[3em]">{{ product.name }}</h3>
             <p class="text-sm text-gray-600 mb-2 line-clamp-2 h-[3em]">{{ product.description }}</p>
-            <div class="flex items-center justify-between">
-                <p class="text-2xl font-bold">${{ product.price.toFixed(2) }}</p>
-                <button
-                    @click="$emit('reserve', product)"
-                    :disabled="product.stock === 0"
-                    class="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300"
-                >
-                    {{ product.stock === 0 ? 'Sold Out' : 'Reserve' }}
-                </button>
-            </div>
+        </router-link>
+        <div class="flex items-center justify-between mt-2">
+            <p class="text-2xl font-bold">${{ product.price.toFixed(2) }}</p>
+            <button
+                @click="handleReserveClick"
+                :disabled="product.stock === 0"
+                class="rounded bg-blue-900 px-4 py-2 text-white hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:hover:bg-gray-300"
+            >
+                {{ product.stock === 0 ? 'Sold Out' : 'Reserve' }}
+            </button>
         </div>
-
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Product } from '@/types/product'
+import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
+import ProductImage from './ProductImage.vue'
 
 const props = defineProps<{
   product: Product
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   reserve: [product: Product]
 }>()
+
+const handleReserveClick = () => {
+  trackEvent('reserve_click', productAnalyticsParams(props.product))
+  emit('reserve', props.product)
+}
 
 const getStockColor = (stock: number) => {
   if (stock === 0) return 'bg-red-100 text-red-900'
