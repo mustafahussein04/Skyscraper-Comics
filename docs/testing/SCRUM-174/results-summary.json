@@ -1,0 +1,408 @@
+{
+  "stats": {
+    "startTime": "2026-11-08T22:43:28.175Z",
+    "duration": 163108.901,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 16,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "case": 1,
+      "browser": "chrome",
+      "title": "add, edit price/stock, and delete across admin, public list, and detail (image URL)",
+      "status": "passed",
+      "durationMs": 6924,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "01-added-admin",
+          "path": "screenshots/chrome/01-01-added-admin.png"
+        },
+        {
+          "label": "02-added-public-card",
+          "path": "screenshots/chrome/01-02-added-public-card.png"
+        },
+        {
+          "label": "02-added-public-detail",
+          "path": "screenshots/chrome/01-02-added-public-detail.png"
+        },
+        {
+          "label": "03-edited-admin",
+          "path": "screenshots/chrome/01-03-edited-admin.png"
+        },
+        {
+          "label": "04-edited-public-card",
+          "path": "screenshots/chrome/01-04-edited-public-card.png"
+        },
+        {
+          "label": "04-edited-public-detail",
+          "path": "screenshots/chrome/01-04-edited-public-detail.png"
+        },
+        {
+          "label": "05-deleted-admin",
+          "path": "screenshots/chrome/01-05-deleted-admin.png"
+        },
+        {
+          "label": "06-deleted-public",
+          "path": "screenshots/chrome/01-06-deleted-public.png"
+        },
+        {
+          "label": "07-deleted-detail",
+          "path": "screenshots/chrome/01-07-deleted-detail.png"
+        }
+      ],
+      "nativeValidation": null
+    },
+    {
+      "case": 1,
+      "browser": "firefox",
+      "title": "add, edit price/stock, and delete across admin, public list, and detail (image URL)",
+      "status": "passed",
+      "durationMs": 4535,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "01-added-admin",
+          "path": "screenshots/firefox/01-01-added-admin.png"
+        },
+        {
+          "label": "02-added-public-card",
+          "path": "screenshots/firefox/01-02-added-public-card.png"
+        },
+        {
+          "label": "02-added-public-detail",
+          "path": "screenshots/firefox/01-02-added-public-detail.png"
+        },
+        {
+          "label": "03-edited-admin",
+          "path": "screenshots/firefox/01-03-edited-admin.png"
+        },
+        {
+          "label": "04-edited-public-card",
+          "path": "screenshots/firefox/01-04-edited-public-card.png"
+        },
+        {
+          "label": "04-edited-public-detail",
+          "path": "screenshots/firefox/01-04-edited-public-detail.png"
+        },
+        {
+          "label": "05-deleted-admin",
+          "path": "screenshots/firefox/01-05-deleted-admin.png"
+        },
+        {
+          "label": "06-deleted-public",
+          "path": "screenshots/firefox/01-06-deleted-public.png"
+        },
+        {
+          "label": "07-deleted-detail",
+          "path": "screenshots/firefox/01-07-deleted-detail.png"
+        }
+      ],
+      "nativeValidation": null
+    },
+    {
+      "case": 2,
+      "browser": "chrome",
+      "title": "add rejects name=\"\" with exact message",
+      "status": "failed",
+      "durationMs": 6470,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/02-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 2,
+      "browser": "firefox",
+      "title": "add rejects name=\"\" with exact message",
+      "status": "failed",
+      "durationMs": 6626,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/02-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 3,
+      "browser": "chrome",
+      "title": "add rejects description=\"\" with exact message",
+      "status": "failed",
+      "durationMs": 6580,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/03-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 3,
+      "browser": "firefox",
+      "title": "add rejects description=\"\" with exact message",
+      "status": "failed",
+      "durationMs": 8248,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/03-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 4,
+      "browser": "chrome",
+      "title": "add rejects brand=\"\" with exact message",
+      "status": "failed",
+      "durationMs": 6674,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/04-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 4,
+      "browser": "firefox",
+      "title": "add rejects brand=\"\" with exact message",
+      "status": "failed",
+      "durationMs": 7297,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/04-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 5,
+      "browser": "chrome",
+      "title": "add rejects price=\"-5\" with exact message",
+      "status": "failed",
+      "durationMs": 7167,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/05-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "-5",
+        "message": "Value must be greater than or equal to 0."
+      }
+    },
+    {
+      "case": 5,
+      "browser": "firefox",
+      "title": "add rejects price=\"-5\" with exact message",
+      "status": "failed",
+      "durationMs": 7307,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/05-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "-5",
+        "message": "Please select a value that is no less than 0."
+      }
+    },
+    {
+      "case": 6,
+      "browser": "chrome",
+      "title": "add rejects price=\"abc\" with exact message",
+      "status": "failed",
+      "durationMs": 6693,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/06-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please fill out this field."
+      }
+    },
+    {
+      "case": 6,
+      "browser": "firefox",
+      "title": "add rejects price=\"abc\" with exact message",
+      "status": "failed",
+      "durationMs": 7523,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/06-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "",
+        "message": "Please enter a number."
+      }
+    },
+    {
+      "case": 7,
+      "browser": "chrome",
+      "title": "add rejects stock=\"2.5\" with exact message",
+      "status": "failed",
+      "durationMs": 6739,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/07-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "2.5",
+        "message": "Please enter a valid value. The two nearest valid values are 2 and 3."
+      }
+    },
+    {
+      "case": 7,
+      "browser": "firefox",
+      "title": "add rejects stock=\"2.5\" with exact message",
+      "status": "failed",
+      "durationMs": 7329,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/07-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "2.5",
+        "message": "Please select a valid value. The two nearest valid values are 2 and 3."
+      }
+    },
+    {
+      "case": 8,
+      "browser": "chrome",
+      "title": "add rejects stock=\"-1\" with exact message",
+      "status": "failed",
+      "durationMs": 6498,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/chrome/08-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "-1",
+        "message": "Value must be greater than or equal to 0."
+      }
+    },
+    {
+      "case": 8,
+      "browser": "firefox",
+      "title": "add rejects stock=\"-1\" with exact message",
+      "status": "failed",
+      "durationMs": 8053,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "validation",
+          "path": "screenshots/firefox/08-validation.png"
+        }
+      ],
+      "nativeValidation": {
+        "value": "-1",
+        "message": "Please select a value that is no less than 0."
+      }
+    },
+    {
+      "case": 9,
+      "browser": "chrome",
+      "title": "POST and PUT reject every specified invalid input without changing persisted data",
+      "status": "passed",
+      "durationMs": 1118,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [],
+      "nativeValidation": null
+    },
+    {
+      "case": 9,
+      "browser": "firefox",
+      "title": "POST and PUT reject every specified invalid input without changing persisted data",
+      "status": "passed",
+      "durationMs": 4842,
+      "browserVersion": "159.0",
+      "evidence": [],
+      "nativeValidation": null
+    },
+    {
+      "case": 10,
+      "browser": "chrome",
+      "title": "uploaded image renders on product card and detail",
+      "status": "failed",
+      "durationMs": 6131,
+      "browserVersion": "156.0.8078.80",
+      "evidence": [
+        {
+          "label": "image-upload-form",
+          "path": "screenshots/chrome/10-image-upload-form.png"
+        }
+      ],
+      "nativeValidation": null
+    },
+    {
+      "case": 10,
+      "browser": "firefox",
+      "title": "uploaded image renders on product card and detail",
+      "status": "failed",
+      "durationMs": 6512,
+      "browserVersion": "159.0",
+      "evidence": [
+        {
+          "label": "image-upload-form",
+          "path": "screenshots/firefox/10-image-upload-form.png"
+        }
+      ],
+      "nativeValidation": null
+    }
+  ]
+}
