@@ -115,7 +115,7 @@ test('legacy database migration and event registration API persistence', async (
     delete global._dbReady
     delete global._dbClient
     process.chdir(originalCwd)
-    fs.rmSync(fixture, { recursive: true, force: true })
+    try { fs.rmSync(fixture, { recursive: true, force: true }) } catch { /* WAL lock on Windows */ }
   }
 })
 
@@ -136,6 +136,6 @@ test('new databases seed events with registration unavailable', async () => {
     delete global._dbReady
     delete global._dbClient
     process.chdir(originalCwd)
-    fs.rmSync(fixture, { recursive: true, force: true })
+    try { fs.rmSync(fixture, { recursive: true, force: true }) } catch { /* WAL lock on Windows */ }
   }
 })
