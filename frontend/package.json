@@ -13,6 +13,7 @@
     "format": "prettier --write src/",
     "test": "npm run test:e2e",
     "test:e2e": "node scripts/admin-login.e2e.mjs",
+    "test:e2e:events": "node scripts/events-calendar.e2e.mjs",
     "test:e2e:chrome": "set E2E_BROWSER=chrome&& npm run test:e2e",
     "test:e2e:firefox": "set E2E_BROWSER=firefox&& npm run test:e2e"
   },
