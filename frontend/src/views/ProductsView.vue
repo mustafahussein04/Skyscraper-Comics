@@ -99,29 +99,54 @@
         </div>
 
         <!-- Products Grid -->
-         <div v-if="filteredProducts.length==0" class="text-left text-black">
-            No products found.
+         <p v-if="loading" class="text-gray-600">Loading products...</p>
+         <p v-else-if="errorMessage" class="rounded-lg bg-red-50 px-4 py-3 text-red-800">
+            {{ errorMessage }}
+         </p>
+         <div v-else-if="productList.length === 0" class="rounded-lg bg-white px-6 py-12 text-center shadow-sm">
+            <p class="text-lg font-semibold text-gray-900">No products available</p>
+            <p class="mt-1 text-gray-600">Check back soon for new comics and trading cards.</p>
+        </div>
+         <div v-else-if="filteredProducts.length==0" class="text-left text-black">
+            No products match your search or filters.
         </div>
          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
             <ProductCard
                 v-for="Product in filteredProducts"
                 :key="Product.id"
-                :product="Product" />
+                :product="Product"
+                @reserve="reservingProduct = $event" />
         </div>
     </div>
+
+    <ReserveModal
+      v-if="reservingProduct"
+      :product="reservingProduct"
+      @close="reservingProduct = null"
+      @reserved="onReserved"
+    />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { products } from '@/mock-data/products'
+import { ref, computed, watch, onMounted } from 'vue'
 import type { Product } from '@/types/product'
 import ProductCard from '@/components/products/ProductCard.vue'
+import ReserveModal from '@/components/products/ReserveModal.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getProducts } from '@/services/api'
+import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
 
 const route = useRoute()
 const router = useRouter()
 
 const showFilters = ref(false)
+const reservingProduct = ref<Product | null>(null)
+
+const onReserved = async () => {
+  try {
+    productList.value = await getProducts()
+  } catch { /* ignore */ }
+}
 
 const searchQuery = ref('')
 const selectedFilter = ref(route.params.filter || 'All')
@@ -139,6 +164,19 @@ watch(() => route.params.filter, (newUrlFilter) => {
 })
 // End of code provided by Google Gemini
 const selectedSubFilter = ref('All')
+const productList = ref<Product[]>([])
+const loading = ref(true)
+const errorMessage = ref('')
+
+onMounted(async () => {
+    try {
+        productList.value = await getProducts()
+    } catch (error) {
+        errorMessage.value = error instanceof Error ? error.message : 'Failed to load products.'
+    } finally {
+        loading.value = false
+    }
+})
 
 const productsFilters = ['All', 'Comics', 'TCG']
 const comicsFilters = ['All', 'Marvel', 'DC', 'Image', 'Dark Horse']
@@ -155,7 +193,7 @@ const currentSubFilters = computed(() => {
 })
 
 const filteredProducts = computed(() => {
-    return products.filter((p: Product) => {
+    return productList.value.filter((p: Product) => {
         const matchesType = p.type === (selectedFilter.value as string).toLowerCase() || selectedFilter.value === 'All'
         const matchesBrand = p.brand === selectedSubFilter.value || selectedSubFilter.value === 'All'
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -164,5 +202,6 @@ const filteredProducts = computed(() => {
         return matchesType && matchesBrand && matchesSearch
     })
 })
+
 
 </script>

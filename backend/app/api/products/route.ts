@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getClient, toObject, toObjects } from '@/lib/db'
 import { corsHeaders, handleOptions } from '@/lib/cors'
+import { parseProductInput, validateProduct } from '@/lib/product-input'
+import { storeProductImage, validateProductImage } from '@/lib/storage'
 
 export function OPTIONS() {
   return handleOptions()
@@ -35,11 +37,19 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const db = await getClient()
-  const { name, price, type, brand, stock, description, image } = await request.json()
+  const input = await parseProductInput(request)
+  const validationError = validateProduct(input) ?? validateProductImage(input.imageFile)
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400, headers: corsHeaders })
+  }
+
+  const image = input.imageFile
+    ? (await storeProductImage(input.imageFile, new URL(request.url).origin)).url
+    : input.image
 
   const rs = await db.execute({
     sql: 'INSERT INTO products (name, price, type, brand, stock, description, image) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    args: [name, Number(price), type, brand, Number(stock) || 0, description ?? '', image ?? ''],
+    args: [input.name.trim(), Number(input.price), input.type, input.brand.trim(), Number(input.stock), input.description.trim(), image],
   })
 
   const product = toObject(await db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [Number(rs.lastInsertRowid)] }))

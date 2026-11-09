@@ -7,10 +7,11 @@
     <div v-else-if="product" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
       <!-- Left: Product Image -->
       <div>
-        <img
+        <ProductImage
           :src="product.image"
           :alt="product.name"
-          class="w-full rounded-lg shadow-md"
+          img-class="w-full rounded-lg shadow-md"
+          placeholder-class="w-full aspect-square rounded-lg"
         />
       </div>
 
@@ -25,12 +26,27 @@
           </span>
           <span class="inline-block bg-gray-700 text-white px-3 py-1 rounded-full text-sm capitalize">{{ product.type }}</span>
         </div>
+        <button
+          v-if="product.stock > 0"
+          type="button"
+          class="mt-6 rounded-lg bg-blue-900 px-6 py-3 font-semibold text-white hover:bg-blue-800"
+          @click="reserving = true"
+        >
+          Reserve
+        </button>
       </div>
     </div>
 
     <div v-else>
       <p class="text-gray-500">Product not found.</p>
     </div>
+
+    <ReserveModal
+      v-if="reserving && product"
+      :product="product"
+      @close="reserving = false"
+      @reserved="onReserved"
+    />
   </div>
 </template>
 
@@ -38,12 +54,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import ReserveModal from '@/components/products/ReserveModal.vue'
+import ProductImage from '@/components/products/ProductImage.vue'
 import { getProduct } from '@/services/api'
 import type { Product } from '@/types/product'
 
 const route = useRoute()
 const product = ref<Product | null>(null)
 const loading = ref(true)
+const reserving = ref(false)
 
 onMounted(async () => {
   const id = Number(route.params.id)
@@ -55,4 +74,12 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+const onReserved = async () => {
+  if (product.value) {
+    try {
+      product.value = await getProduct(product.value.id)
+    } catch { /* ignore */ }
+  }
+}
 </script>

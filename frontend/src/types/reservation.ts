@@ -1,6 +1,12 @@
 export type Reservation = {
   id: string
+  confirmationNumber: string
   productId: number
-  userEmail: string
+  productName: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
   reservedAt: string
+  expiresAt: string
+  status: 'Active' | 'Expired'
 }

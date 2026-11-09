@@ -141,3 +141,5 @@ vite.config.ts.timestamp-*
 # Generated browser test reports (curated SCRUM evidence is in docs/testing)
 frontend/playwright-report/
 frontend/test-results/
+# Local dev database (auto-created and seeded by backend/lib/db.ts)
+backend/data/

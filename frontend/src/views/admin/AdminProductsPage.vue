@@ -80,14 +80,27 @@
           </div>
 
           <div>
-            <label for="prod-image" class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <label for="prod-image" class="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
             <input
               id="prod-image"
-              v-model="form.image"
-              type="text"
-              placeholder="https://... or /images/..."
-              class="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              @change="handleImageChange"
+              class="sr-only"
             />
+            <div class="flex min-h-11 items-center gap-3 rounded-lg border border-gray-300 bg-white px-3 py-2">
+              <label
+                for="prod-image"
+                class="inline-flex cursor-pointer items-center rounded-md bg-blue-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800 focus-within:outline-none focus-within:ring-4 focus-within:ring-blue-100"
+              >
+                Choose File
+              </label>
+              <span class="min-w-0 truncate text-sm text-gray-600">
+                {{ form.imageFile?.name ?? 'No file chosen' }}
+              </span>
+            </div>
+            <img v-if="form.imagePreview" :src="form.imagePreview" alt="Selected product preview" class="mt-3 h-32 w-32 rounded-lg object-cover" />
+            <p class="mt-1 text-xs text-gray-500">JPG, PNG, or WEBP. Maximum 5 MB.</p>
           </div>
         </div>
 
@@ -97,6 +110,7 @@
             id="prod-desc"
             v-model="form.description"
             rows="3"
+            required
             placeholder="Brief description of the product..."
             class="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100 resize-none"
           ></textarea>
@@ -206,23 +220,56 @@ const emptyForm = () => ({
   brand: '',
   stock: '',
   description: '',
-  image: '',
+  imageFile: null as File | null,
+  imagePreview: '',
 })
 
 const form = ref(emptyForm())
 
+const handleImageChange = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0] ?? null
+  if (form.value.imagePreview) URL.revokeObjectURL(form.value.imagePreview)
+  form.value.imageFile = file
+  form.value.imagePreview = file ? URL.createObjectURL(file) : ''
+}
+
 const handleAddProduct = async () => {
   errorMessage.value = ''
+  successMessage.value = ''
+  const { name, price, type, brand, stock, description } = form.value
+  if (!name.trim() || !description.trim() || !type || !brand.trim()) {
+    errorMessage.value = 'Please complete all required fields.'
+    return
+  }
+  const parsedPrice = Number(price)
+  const parsedStock = Number(stock)
+  if (form.value.imageFile && !['image/jpeg', 'image/png', 'image/webp'].includes(form.value.imageFile.type)) {
+    errorMessage.value = 'Product image must be a JPG, PNG, or WEBP file.'
+    return
+  }
+  if (form.value.imageFile && form.value.imageFile.size > 5 * 1024 * 1024) {
+    errorMessage.value = 'Product image must be 5 MB or smaller.'
+    return
+  }
+  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    errorMessage.value = 'Price must be a valid non-negative number.'
+    return
+  }
+  if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+    errorMessage.value = 'Stock must be a non-negative whole number.'
+    return
+  }
   saving.value = true
   try {
     const created = await createProduct({
       name: form.value.name,
-      price: Number(form.value.price),
+      price: parsedPrice,
       type: form.value.type as 'comics' | 'tcg',
       brand: form.value.brand,
-      stock: Number(form.value.stock),
+      stock: parsedStock,
       description: form.value.description,
-      image: form.value.image,
+      imageFile: form.value.imageFile,
     })
     products.value.push(created)
     successMessage.value = `"${created.name}" has been added to the catalog.`
@@ -238,7 +285,7 @@ const handleAddProduct = async () => {
   }
 }
 
-const handleSaveProduct = async (updated: Product) => {
+const handleSaveProduct = async (updated: Product, imageFile: File | null) => {
   try {
     const saved = await updateProduct(updated.id, {
       name: updated.name,
@@ -248,6 +295,7 @@ const handleSaveProduct = async (updated: Product) => {
       stock: updated.stock,
       description: updated.description,
       image: updated.image,
+      imageFile,
     })
     const idx = products.value.findIndex(p => p.id === saved.id)
     if (idx !== -1) products.value[idx] = saved
