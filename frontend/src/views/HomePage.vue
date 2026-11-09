@@ -151,6 +151,9 @@
     <section class="px-6 py-16 bg-gray-100">
       <h2 class="text-3xl font-bold text-center mb-10">Upcoming Events</h2>
       <div class="max-w-2xl mx-auto flex flex-col gap-4 mb-8">
+        <p v-if="!loading && events.length === 0" class="text-center text-gray-600">
+          No upcoming events right now. Check back soon!
+        </p>
         <div v-for="event in events" :key="event.title" class="bg-white rounded-lg p-6 shadow-sm">
           <h3 class="font-bold text-lg">{{ event.title }}</h3>
           <p class="text-gray-600 text-sm">{{ event.desc }}</p>
@@ -171,7 +174,7 @@
 import { RouterLink } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
 import { getEvents } from '@/services/api'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 
 const loading = ref(true)
 const rawEvents = ref<AdminEvent[]>([])

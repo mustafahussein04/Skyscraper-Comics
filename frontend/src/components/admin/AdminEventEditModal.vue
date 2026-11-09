@@ -157,7 +157,7 @@
 import { computed, reactive } from 'vue'
 import { X } from 'lucide-vue-next'
 import { isValidRegistrationLink } from '@/utils/registrationLink'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 import { EVENT_CATEGORIES } from '@/config/eventCategories'
 
 const props = defineProps<{
