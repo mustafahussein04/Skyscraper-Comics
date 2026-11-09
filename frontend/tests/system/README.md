@@ -20,9 +20,17 @@ The fixture is removed when the backend exits. No production services are needed
 
 The lifecycle case adds a comic through the UI, checks persistence after reload,
 checks its public card/detail and image loading, changes price to 6.99 and stock
-to 3, checks all views again, then deletes and checks absence/404. It uses the
-existing Image URL field. A separate upload case requires an actual file input
-and then checks the uploaded image on both public views.
+to 3, checks all views again, then deletes and checks absence/404. It uploads a
+real image file with Playwright's `setInputFiles`, checks that the stored image
+bytes match the fixture, and verifies the saved image URL and successful loading
+on both public views. A separate upload case also checks the form preview and
+uploaded image rendering. The API validation case uses an existing image URL.
+
+The upload fixture is the tracked repository asset
+`frontend/public/images/product/product-01.jpg`. Its path resolves relative to
+the test file, independently of the terminal's current directory or checkout
+location. No personal Downloads/Desktop file or hard-coded Windows drive path
+is used. Absolute checkout paths in generated Playwright JSON are run metadata.
 
 Seven independent UI cases check the exact acceptance-criteria error strings.
 They preserve native browser validation: the tests do not bypass it to force

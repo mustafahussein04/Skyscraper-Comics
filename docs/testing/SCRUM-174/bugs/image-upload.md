@@ -1,9 +1,13 @@
 # Bug draft: Admin product form has no image file upload
 
-Jira status: **Not filed**. Atlassian integration is disabled by the workspace
-administrator. Create a Jira Bug, link it to SCRUM-174, and replace this notice
-with its real issue URL before accepting the story. This document is a local
-draft, not a Jira issue.
+Current status: **No longer reproduced in the latest run.** The merged product
+form now supports a real file upload. Corrected tests use `setInputFiles`, verify
+the stored file bytes, and check the saved image on both public views. These
+checks pass in Chrome and Firefox. See the [current report](../report.md).
+
+This unfiled draft is retained as a historical finding from the earlier version.
+It is not a current failed acceptance check or a Jira issue. The reproduction
+and expected/actual behavior below describe that earlier version.
 
 Suggested priority: Medium. Blocks the uploaded-image acceptance criterion.
 

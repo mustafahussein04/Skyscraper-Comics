@@ -1,7 +1,10 @@
 import { test, expect, type Page } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
 const api = 'http://127.0.0.1:3101/api/products'
 const image = '/images/product/product-01.jpg'
+const imageFile = fileURLToPath(new URL('../../public/images/product/product-01.jpg', import.meta.url))
 const valid = { name: 'SCRUM-174 Comic', description: 'System test comic book.', type: 'comics', brand: 'Marvel', price: 4.99, stock: 10, image }
 const invalid = [
   { field: 'name', selector: '#prod-name', value: '', error: 'Product name is required.' },
@@ -22,7 +25,7 @@ async function openAdd(page: Page, name: string) {
   await page.locator('#prod-brand').fill(valid.brand)
   await page.locator('#prod-price').fill('4.99')
   await page.locator('#prod-stock').fill('10')
-  await page.locator('#prod-image').fill(image)
+  await page.locator('#prod-image').setInputFiles(imageFile)
 }
 
 async function screenshot(page: Page, name: string) {
@@ -41,7 +44,7 @@ test.beforeEach(async ({ page }, info) => {
   info.annotations.push({ type: 'browser-version', description: page.context().browser()!.version() })
 })
 
-test('add, edit price/stock, and delete across admin, public list, and detail (image URL)', async ({ page, request }) => {
+test('add, edit price/stock, and delete across admin, public list, and detail (uploaded image)', async ({ page, request }) => {
   const name = `${valid.name} ${test.info().project.name} ${Date.now()}`
   let id: number | undefined
   try {
@@ -50,7 +53,13 @@ test('add, edit price/stock, and delete across admin, public list, and detail (i
     await page.getByRole('button', { name: 'Add Product', exact: true }).click()
     const response = await created
     expect(response.status()).toBe(201)
-    id = (await response.json()).id
+    const product = await response.json()
+    id = product.id
+    const uploadedImage = product.image
+    expect(uploadedImage).toContain('/api/uploads/products/')
+    const storedImage = await request.get(uploadedImage)
+    expect(storedImage.ok()).toBe(true)
+    expect(await storedImage.body()).toEqual(readFileSync(imageFile))
     const row = page.locator('div.flex.items-center.justify-between.py-4').filter({ hasText: name })
     await expect(row).toContainText('$4.99')
     await expect(row).toContainText('Stock: 10')
@@ -65,7 +74,7 @@ test('add, edit price/stock, and delete across admin, public list, and detail (i
       await expect(card).toContainText(price)
       await expect(card).toContainText(stock)
       await expect(card).toContainText(valid.description)
-      await expect(card.getByRole('img', { name, exact: true })).toHaveAttribute('src', image)
+      await expect(card.getByRole('img', { name, exact: true })).toHaveAttribute('src', uploadedImage)
       await expect.poll(() => card.getByRole('img', { name, exact: true }).evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true)
       await screenshot(page, `${phase}-public-card`)
       await page.goto(`/products/${id}`)
@@ -73,7 +82,7 @@ test('add, edit price/stock, and delete across admin, public list, and detail (i
       await expect(page.getByText(price, { exact: true })).toBeVisible()
       await expect(page.getByText('In Stock', { exact: true })).toBeVisible()
       const detailImage = page.getByRole('img', { name, exact: true })
-      await expect(detailImage).toHaveAttribute('src', image)
+      await expect(detailImage).toHaveAttribute('src', uploadedImage)
       await expect.poll(() => detailImage.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true)
       await screenshot(page, `${phase}-public-detail`)
     }
@@ -98,9 +107,14 @@ test('add, edit price/stock, and delete across admin, public list, and detail (i
     await page.reload()
     await expect(row).toHaveCount(0)
     await screenshot(page, '05-deleted-admin')
+    const publicList = page.waitForResponse(r => r.url() === api && r.request().method() === 'GET')
     await page.goto('/products')
+    const publicResponse = await publicList
+    expect(publicResponse.ok()).toBe(true)
+    expect((await publicResponse.json()).some((product: { id: number }) => product.id === id)).toBe(false)
     await page.getByPlaceholder('Search products...').fill(name)
-    await expect(page.getByText('No products found.', { exact: true })).toBeVisible()
+    await expect(page.getByText('Loading products...', { exact: true })).toHaveCount(0)
+    await expect(page.locator('div.bg-white.p-4').filter({ hasText: name })).toHaveCount(0)
     await screenshot(page, '06-deleted-public')
     await page.goto(`/products/${id}`)
     await expect(page.getByText('Product not found.', { exact: true })).toBeVisible()
@@ -158,21 +172,26 @@ test('POST and PUT reject every specified invalid input without changing persist
 test('uploaded image renders on product card and detail', async ({ page, request }) => {
   const name = `${valid.name} upload ${Date.now()}`
   await openAdd(page, name)
-  await page.locator('#prod-image').fill('')
+  await expect(page.getByRole('img', { name: 'Selected product preview', exact: true })).toBeVisible()
   await screenshot(page, 'image-upload-form')
   const upload = page.locator('input[type=file]')
   await expect(upload, 'Acceptance criterion requires file upload; an Image URL field alone is insufficient.').toHaveCount(1)
-  await upload.setInputFiles('public/images/product/product-01.jpg')
   let id: number | undefined
   try {
     const created = page.waitForResponse(r => r.url() === api && r.request().method() === 'POST')
     await page.getByRole('button', { name: 'Add Product', exact: true }).click()
     const response = await created
     expect(response.status()).toBe(201)
-    id = (await response.json()).id
+    const product = await response.json()
+    id = product.id
+    expect(product.image).toContain('/api/uploads/products/')
+    const storedImage = await request.get(product.image)
+    expect(storedImage.ok()).toBe(true)
+    expect(await storedImage.body()).toEqual(readFileSync(imageFile))
     for (const route of ['/products', `/products/${id}`]) {
       await page.goto(route)
       const img = page.getByRole('img', { name, exact: true })
+      await expect(img).toHaveAttribute('src', product.image)
       await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true)
       await screenshot(page, route === '/products' ? 'uploaded-card' : 'uploaded-detail')
     }
