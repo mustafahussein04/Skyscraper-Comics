@@ -1,7 +1,7 @@
 # SCRUM-175 — Admin Events & Public Events Page — chrome
 
-Run date: 2026-11-09T03:08:16.891Z
-Events created by this run use the title prefix `E2E-175-mw8ol7kw` and are deleted afterwards.
+Run date: 2026-11-09T03:24:53.285Z
+Events created by this run use the title prefix `E2E-175-mw8p6iwj` and are deleted afterwards.
 
 | Test | Status | Screenshot |
 |---|---|---|

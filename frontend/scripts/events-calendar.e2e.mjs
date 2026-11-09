@@ -72,9 +72,10 @@ async function waitFor(url, timeoutMs = 30000) {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(url)
+      // Abort a hung connection: without a signal, a wedged server stalls this loop forever.
+      const response = await fetch(url, { signal: AbortSignal.timeout(2000) })
       if (response.ok) return
-    } catch { /* still starting */ }
+    } catch { /* still starting, or the server stopped answering */ }
     await new Promise(r => setTimeout(r, 250))
   }
   throw new Error(`Timed out waiting for ${url}`)
@@ -498,7 +499,10 @@ async function main() {
         assertEqual((await error.getText()).trim(), VALIDATION_MESSAGE, 'validation message')
         assert(await driver.findElement(By.id('edit-title')).isDisplayed(), 'Modal closed even though the link was invalid')
         assert(!(await apiEventTitles()).includes(spec.title), `Invalid link "${link}" was saved anyway`)
-        await driver.findElement(By.xpath("//form//button[normalize-space()='Cancel']")).click()
+        // Leave the modal open and bring the error into view so the case's screenshot shows the
+        // rejected value and the message. The next case reloads /admin/events, discarding it.
+        await driver.executeScript('arguments[0].scrollIntoView({ block: "center" })', error)
+        await driver.sleep(250)
       })
     }
   } finally {
