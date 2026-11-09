@@ -11,6 +11,8 @@
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
+    "test:system": "playwright test",
+    "test:system:report": "playwright show-report",
     "test": "npm run test:e2e",
     "test:e2e": "node scripts/admin-login.e2e.mjs",
     "test:e2e:events": "node scripts/events-calendar.e2e.mjs",
@@ -41,6 +43,7 @@
     "vuevectormap": "^2.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^22.10.7",
