@@ -14,7 +14,17 @@ export const reserveProduct = async (
   }
 
   try {
-    return await createReservation(product.id, userEmail)
+    const reservation = await createReservation({
+      productId: product.id,
+      firstName: userEmail,
+      lastName: '',
+      phoneNumber: '',
+    })
+    return {
+      success: reservation.success,
+      message: reservation.message ?? reservation.productName,
+      stock: product.stock,
+    }
   } catch {
     return { success: false, message: 'Failed to reserve item. Please try again.', stock: product.stock }
   }
