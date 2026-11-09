@@ -12,7 +12,7 @@
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "test:system": "playwright test",
-    "test:system:report": "playwright show-report"
+    "test:system:report": "playwright show-report",
     "test": "npm run test:e2e",
     "test:e2e": "node scripts/admin-login.e2e.mjs",
     "test:e2e:chrome": "set E2E_BROWSER=chrome&& npm run test:e2e",
