@@ -29,6 +29,23 @@ The prior run with 18 failures was blocked by outdated test automation calling `
 
 ## Acceptance criteria
 
+### How to read PASS and FAIL
+
+**PASS means the actual behavior matches every expectation in that test. FAIL means at least one expectation was not met.** An invalid input is test data; it does not automatically mean the test failed. Correctly rejecting invalid input is a successful validation check.
+
+| Check | PASS requirement | FAIL condition |
+| --- | --- | --- |
+| Reject invalid UI input | Submission is blocked and no product is saved. | An invalid product is saved. |
+| Show the exact UI error message | Invalid input is rejected, no product is saved, and the specified application message is visible. | Any expectation is unmet, including missing or different message text even when rejection works. |
+| Reject invalid API input | Both POST and PUT return HTTP 400 with the expected error, and persisted data stays unchanged. | A response has the wrong status/message, or persisted data changes. |
+| Accept valid product data | Add/edit succeeds and the expected values persist and appear in the checked views. | Valid data is rejected, saved incorrectly, or missing from a checked view. |
+
+For example, stock `2.5` and `-1` must be rejected because stock must be a non-negative whole number. Price `-5` and `abc` must also be rejected, but a decimal price such as `4.99` is valid.
+
+**In this recorded run, invalid-input rejection worked in both browsers.** The seven UI validation tests per browser still show FAILED because they also require exact application messages. For stock `2.5`, Chrome displayed “Please enter a valid value. The two nearest valid values are 2 and 3.” instead of “Stock must be a non-negative whole number.” The failure is for the message requirement; it does not mean the invalid stock was accepted.
+
+The 6 passed / 14 failed totals count complete automated test executions. Rejection and message checks inside one test are not counted as separate executions. The recorded results below retain that meaning.
+
 | Criterion | Chrome | Firefox | Failure reference |
 | --- | --- | --- | --- |
 | Add product through UI; appears in admin/public list | Pass | Pass | — |
