@@ -10,7 +10,11 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "test": "npm run test:e2e",
+    "test:e2e": "node scripts/admin-login.e2e.mjs",
+    "test:e2e:chrome": "set E2E_BROWSER=chrome&& npm run test:e2e",
+    "test:e2e:firefox": "set E2E_BROWSER=firefox&& npm run test:e2e"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",
@@ -50,6 +54,7 @@
     "npm-run-all2": "^7.0.2",
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
+    "selenium-webdriver": "^4.27.0",
     "sass-embedded": "^1.83.4",
     "tailwindcss": "^4.0.0",
     "typescript": "~5.7.3",
