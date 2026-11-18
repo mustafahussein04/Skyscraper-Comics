@@ -12,7 +12,7 @@
     <div v-if="showAddForm" class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
       <h3 class="text-xl font-bold text-gray-900 mb-6">Add New Product</h3>
 
-      <form @submit.prevent="handleAddProduct" class="space-y-5">
+      <form novalidate @submit.prevent="handleAddProduct" class="space-y-5">
         <div class="grid gap-5 sm:grid-cols-2">
           <div>
             <label for="prod-name" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
@@ -119,7 +119,7 @@
         <p v-if="successMessage" class="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
           {{ successMessage }}
         </p>
-        <p v-if="errorMessage" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+        <p v-if="errorMessage" role="alert" aria-live="polite" class="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
           {{ errorMessage }}
         </p>
 
@@ -238,12 +238,30 @@ const handleAddProduct = async () => {
   errorMessage.value = ''
   successMessage.value = ''
   const { name, price, type, brand, stock, description } = form.value
-  if (!name.trim() || !description.trim() || !type || !brand.trim()) {
-    errorMessage.value = 'Please complete all required fields.'
+  if (!name.trim()) {
+    errorMessage.value = 'Product name is required.'
+    return
+  }
+  if (!description.trim()) {
+    errorMessage.value = 'Description is required.'
+    return
+  }
+  if (!type) {
+    errorMessage.value = 'Type must be Comics or TCG.'
+    return
+  }
+  if (!brand.trim()) {
+    errorMessage.value = 'Brand is required.'
     return
   }
   const parsedPrice = Number(price)
   const parsedStock = Number(stock)
+  const priceText = String(price ?? '').trim()
+  const stockText = String(stock ?? '').trim()
+  if (!form.value.imageFile) {
+    errorMessage.value = 'Product image is required.'
+    return
+  }
   if (form.value.imageFile && !['image/jpeg', 'image/png', 'image/webp'].includes(form.value.imageFile.type)) {
     errorMessage.value = 'Product image must be a JPG, PNG, or WEBP file.'
     return
@@ -252,11 +270,11 @@ const handleAddProduct = async () => {
     errorMessage.value = 'Product image must be 5 MB or smaller.'
     return
   }
-  if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+  if (!priceText || !Number.isFinite(parsedPrice) || parsedPrice < 0) {
     errorMessage.value = 'Price must be a valid non-negative number.'
     return
   }
-  if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+  if (!stockText || !Number.isInteger(parsedStock) || parsedStock < 0) {
     errorMessage.value = 'Stock must be a non-negative whole number.'
     return
   }

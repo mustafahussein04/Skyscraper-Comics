@@ -7,11 +7,11 @@
     <div v-else-if="product" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
       <!-- Left: Product Image -->
       <div>
-        <img
-          :src="product.image || '/images/product/product-01.jpg'"
+        <ProductImage
+          :src="product.image"
           :alt="product.name"
-          class="w-full rounded-lg shadow-md"
-          @error="($event.target as HTMLImageElement).src = '/images/product/product-01.jpg'"
+          img-class="w-full rounded-lg shadow-md"
+          placeholder-class="w-full aspect-square rounded-lg"
         />
       </div>
 
@@ -55,6 +55,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import ReserveModal from '@/components/products/ReserveModal.vue'
+import ProductImage from '@/components/products/ProductImage.vue'
 import { getProduct } from '@/services/api'
 import type { Product } from '@/types/product'
 

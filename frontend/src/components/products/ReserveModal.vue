@@ -118,6 +118,7 @@
 import { reactive, ref } from 'vue'
 import type { Product } from '@/types/product'
 import { createReservation } from '@/services/api'
+import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
 
 const props = defineProps<{ product: Product }>()
 const emit = defineEmits<{ close: []; reserved: [] }>()
@@ -152,6 +153,7 @@ async function handleSubmit() {
       phoneNumber: form.phoneNumber.replace(/\D/g, ''),
     })
     confirmed.value = { confirmationNumber: res.confirmationNumber, productName: res.productName, expiresAt: res.expiresAt }
+    trackEvent('reservation_completed', productAnalyticsParams(props.product))
     emit('reserved')
   } catch (err) {
     serverError.value = err instanceof Error ? err.message : 'Failed to reserve. Please try again.'

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
-import { corsHeaders, handleOptions } from '@/lib/cors'
+import { handleOptions, headersFor } from '@/lib/cors'
 
 const DEFAULT_ADMIN_EMAIL = 'admin@skyscrapercomics.com'
 const DEFAULT_ADMIN_PASSWORD_HASH = '$2b$12$bZAVE6xF.MY0FNv4S3d6MOManSpqg1vxXpfDfW037EZMZuCjZj2Pe'
 
-export function OPTIONS() {
-  return handleOptions()
+export function OPTIONS(request: NextRequest) {
+  return handleOptions(request)
 }
 
 export async function POST(request: NextRequest) {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { success: false, error: 'Invalid email or password.' },
-      { status: 401, headers: corsHeaders }, 
+      { status: 401, headers: headersFor(request) },
     )
   }
 
@@ -29,11 +29,11 @@ export async function POST(request: NextRequest) {
   const passwordMatches = await bcrypt.compare(password, adminPasswordHash)
 
   if (email === adminEmail && passwordMatches) {
-    return NextResponse.json({ success: true }, { headers: corsHeaders })
+    return NextResponse.json({ success: true }, { headers: headersFor(request) })
   }
 
   return NextResponse.json(
     { success: false, error: 'Invalid email or password.' },
-    { status: 401, headers: corsHeaders }
+    { status: 401, headers: headersFor(request) }
   )
 }

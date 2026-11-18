@@ -35,6 +35,7 @@
 import { ref } from 'vue'
 import type { Product } from '@/types/product'
 import { productAnalyticsParams, trackEvent } from '@/composables/useAnalytics'
+import ProductImage from './ProductImage.vue'
 
 const props = defineProps<{
   product: Product

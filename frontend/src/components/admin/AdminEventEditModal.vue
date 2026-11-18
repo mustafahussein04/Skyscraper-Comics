@@ -157,7 +157,7 @@
 import { computed, reactive } from 'vue'
 import { X } from 'lucide-vue-next'
 import { isValidRegistrationLink } from '@/utils/registrationLink'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 import { EVENT_CATEGORIES } from '@/config/eventCategories'
 
 const props = defineProps<{
@@ -174,7 +174,7 @@ const draft = reactive({ ...props.event, registrationLink: props.event.registrat
 const registrationLinkError = computed(() =>
   isValidRegistrationLink(draft.registrationLink)
     ? ''
-    : 'Enter a valid URL starting with http:// or https://.',
+    : 'Enter a valid Registration Link starting with http:// or https://.',
 )
 
 // SCRUM-87: id === 0 means the page opened this modal in "add new" mode

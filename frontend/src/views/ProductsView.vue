@@ -103,8 +103,12 @@
          <p v-else-if="errorMessage" class="rounded-lg bg-red-50 px-4 py-3 text-red-800">
             {{ errorMessage }}
          </p>
+         <div v-else-if="productList.length === 0" class="rounded-lg bg-white px-6 py-12 text-center shadow-sm">
+            <p class="text-lg font-semibold text-gray-900">No products available</p>
+            <p class="mt-1 text-gray-600">Check back soon for new comics and trading cards.</p>
+        </div>
          <div v-else-if="filteredProducts.length==0" class="text-left text-black">
-            No products found.
+            No products match your search or filters.
         </div>
          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 margin-10 padding-10">
             <ProductCard

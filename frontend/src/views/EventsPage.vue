@@ -250,7 +250,7 @@ import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-n
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
 import { getEvents } from '@/services/api'
 import { isValidRegistrationLink } from '@/utils/registrationLink'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 import { EVENT_CATEGORIES, getCategoryColor as configGetCategoryColor } from '@/config/eventCategories'
 import { trackEvent } from '@/composables/useAnalytics'
 

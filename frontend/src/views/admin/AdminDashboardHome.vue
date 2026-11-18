@@ -108,7 +108,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { getEvents, getProducts, getReservations } from '@/services/api'
 
 import type { Product } from '@/types/product'
-import type { AdminEvent } from '@/data/events'
+import type { AdminEvent } from '@/types/event'
 import type { Reservation } from '@/types/reservation'
 
 const products = ref<Product[]>([])

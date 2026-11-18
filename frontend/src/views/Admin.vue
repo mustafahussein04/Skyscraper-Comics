@@ -46,7 +46,6 @@
                 id="email"
                 v-model="email"
                 type="email"
-                required
                 autocomplete="username"
                 class="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                 placeholder="admin@skyscrapercomics.com"
@@ -60,7 +59,6 @@
                 id="password"
                 v-model="password"
                 type="password"
-                required
                 autocomplete="current-password"
                 class="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                 placeholder="Enter your password"

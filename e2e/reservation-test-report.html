@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Reservation — Test Report</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      color: #1a1a1a;
+    }
+
+    h1 {
+      color: #1e3a5f;
+    }
+
+    .summary {
+      background: #f0f4f8;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary span {
+      margin-right: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .pass-count {
+      color: #166534;
+      font-weight: bold;
+    }
+
+    .fail-count {
+      color: #991b1b;
+      font-weight: bold;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #1e3a5f;
+      color: #fff;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    td {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      vertical-align: top;
+    }
+
+    .row-pass {
+      background: #f0fdf4;
+    }
+
+    .row-fail {
+      background: #fef2f2;
+    }
+
+    .pass {
+      color: #166534;
+      font-weight: bold;
+    }
+
+    .fail {
+      color: #991b1b;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #991b1b;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+
+    img {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: block;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Product Reservation — Test Report</h1>
+
+  <div class="summary">
+    <span>
+      Date:
+      <b>11/8/2026</b>
+    </span>
+
+    <span>
+      Tester:
+      <b></b>
+    </span>
+
+    <span>
+      Observer:
+      <b>—</b>
+    </span>
+
+    <span class="pass-count">
+      Passed: 8
+    </span>
+
+    <span class="fail-count">
+      Failed: 0
+    </span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Test Description</th>
+        <th>Details</th>
+        <th>Inputs</th>
+        <th>Tester</th>
+        <th>Observer</th>
+        <th>Date Tested</th>
+        <th>Result</th>
+        <th>Screenshot</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      
+          <tr class="row-pass">
+            <td>[chrome] valid: customer reserves a product and admin can find the reservation</td>
+            <td>Reserve an in-stock product as John Doe, verify confirmation details and stock decrement, then find the reservation in Admin → Orders by confirmation number.</td>
+            <td><b>firstName:</b> John<br><b>lastName:</b> Doe<br><b>phone:</b> 916-555-1234</td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-chrome-valid-customer-reserves-a-product-and-admin-can-find-the-reservation.png" target="_blank"><img src="screenshots/pass-chrome-valid-customer-reserves-a-product-and-admin-can-find-the-reservation.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[chrome] invalid: reservation form requires first name, last name, and phone</td>
+            <td>Submit an empty reservation form and verify all required-field messages.</td>
+            <td><b>firstName:</b> <br><b>lastName:</b> <br><b>phone:</b> </td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-chrome-invalid-reservation-form-requires-first-name-last-name-and-phone.png" target="_blank"><img src="screenshots/pass-chrome-invalid-reservation-form-requires-first-name-last-name-and-phone.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[chrome] invalid: reservation form rejects a non-10-digit US phone number</td>
+            <td>Submit John Doe with phone 12345 and verify the exact phone validation message.</td>
+            <td><b>firstName:</b> John<br><b>lastName:</b> Doe<br><b>phone:</b> 12345</td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-chrome-invalid-reservation-form-rejects-a-non-10-digit-US-phone-number.png" target="_blank"><img src="screenshots/pass-chrome-invalid-reservation-form-rejects-a-non-10-digit-US-phone-number.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[chrome] invalid: sold-out product cannot be opened for reservation</td>
+            <td>Verify a stock-0 product displays Sold Out and the reservation button is disabled. The backend test separately verifies the exact sold-out response message.</td>
+            <td><b>stock:</b> 0<br><b>expected:</b> Sold Out</td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-chrome-invalid-sold-out-product-cannot-be-opened-for-reservation.png" target="_blank"><img src="screenshots/pass-chrome-invalid-sold-out-product-cannot-be-opened-for-reservation.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[firefox] valid: customer reserves a product and admin can find the reservation</td>
+            <td>Reserve an in-stock product as John Doe, verify confirmation details and stock decrement, then find the reservation in Admin → Orders by confirmation number.</td>
+            <td><b>firstName:</b> John<br><b>lastName:</b> Doe<br><b>phone:</b> 916-555-1234</td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-firefox-valid-customer-reserves-a-product-and-admin-can-find-the-reservation.png" target="_blank"><img src="screenshots/pass-firefox-valid-customer-reserves-a-product-and-admin-can-find-the-reservation.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[firefox] invalid: reservation form requires first name, last name, and phone</td>
+            <td>Submit an empty reservation form and verify all required-field messages.</td>
+            <td><b>firstName:</b> <br><b>lastName:</b> <br><b>phone:</b> </td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-firefox-invalid-reservation-form-requires-first-name-last-name-and-phone.png" target="_blank"><img src="screenshots/pass-firefox-invalid-reservation-form-requires-first-name-last-name-and-phone.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[firefox] invalid: reservation form rejects a non-10-digit US phone number</td>
+            <td>Submit John Doe with phone 12345 and verify the exact phone validation message.</td>
+            <td><b>firstName:</b> John<br><b>lastName:</b> Doe<br><b>phone:</b> 12345</td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-firefox-invalid-reservation-form-rejects-a-non-10-digit-US-phone-number.png" target="_blank"><img src="screenshots/pass-firefox-invalid-reservation-form-rejects-a-non-10-digit-US-phone-number.png" width="160" alt="screenshot"></a></td>
+          </tr>
+
+          <tr class="row-pass">
+            <td>[firefox] invalid: sold-out product cannot be opened for reservation</td>
+            <td>Verify a stock-0 product displays Sold Out and the reservation button is disabled. The backend test separately verifies the exact sold-out response message.</td>
+            <td><b>stock:</b> 0<br><b>expected:</b> Sold Out</td>
+            <td></td>
+            <td>—</td>
+            <td>11/8/2026</td>
+            <td class="pass">PASS</td>
+            <td><a href="screenshots/pass-firefox-invalid-sold-out-product-cannot-be-opened-for-reservation.png" target="_blank"><img src="screenshots/pass-firefox-invalid-sold-out-product-cannot-be-opened-for-reservation.png" width="160" alt="screenshot"></a></td>
+          </tr>
+    </tbody>
+  </table>
+</body>
+</html>
