@@ -51,6 +51,17 @@ async function initSchema(): Promise<void> {
       reservedAt TEXT NOT NULL,
       FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
     );
+    CREATE TABLE IF NOT EXISTS page_visits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      path TEXT NOT NULL,
+      duration_seconds INTEGER NOT NULL DEFAULT 0,
+      visited_at TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS event_link_clicks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_title TEXT NOT NULL,
+      clicked_at TEXT NOT NULL
+    );
   `)
 
   // Upgrade existing databases without changing existing event data.

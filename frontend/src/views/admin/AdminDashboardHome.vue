@@ -1,14 +1,5 @@
 <template>
   <div class="space-y-8">
-    <section class="rounded-2xl bg-gradient-to-r from-blue-900 to-violet-700 p-6 text-white sm:p-8">
-      <p class="mb-2 text-sm font-semibold uppercase tracking-widest text-violet-200">
-        Dashboard home
-      </p>
-      <h2 class="text-3xl font-bold">Welcome to the admin dashboard</h2>
-      <p class="mt-3 max-w-2xl text-blue-100">
-        Use the sidebar to move between management areas.
-      </p>
-    </section>
 
     <section aria-labelledby="overview-heading">
       <div class="mb-4 flex items-center justify-between">
@@ -80,25 +71,79 @@
       </div>
     </section>
 
-    <section aria-labelledby="quick-links-heading">
-      <h2 id="quick-links-heading" class="mb-4 text-xl font-bold text-gray-900">Quick links</h2>
-      <div class="grid gap-4 md:grid-cols-2">
-        <RouterLink
-          v-for="link in quickLinks"
-          :key="link.path"
-          :to="link.path"
-          class="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-violet-300 hover:shadow-md"
-        >
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <h3 class="font-bold text-gray-900 group-hover:text-violet-700">{{ link.label }}</h3>
-              <p class="mt-1 text-sm text-gray-500">{{ link.description }}</p>
-            </div>
-            <span class="text-xl text-violet-600" aria-hidden="true">&rarr;</span>
-          </div>
+    <!-- Products preview -->
+    <section aria-labelledby="products-heading">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 id="products-heading" class="text-xl font-bold text-gray-900">Products</h2>
+        <RouterLink to="/admin/products" class="text-sm font-semibold text-violet-700 hover:text-violet-900">
+          View all
         </RouterLink>
       </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div v-if="isInitialLoading" class="p-6 text-sm text-gray-400">Loading…</div>
+        <div v-else-if="products.length === 0" class="p-6 text-sm text-gray-400">No products in the catalog yet.</div>
+        <table v-else class="w-full text-left text-sm">
+          <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <tr>
+              <th class="px-5 py-3">Product</th>
+              <th class="px-5 py-3">Type</th>
+              <th class="px-5 py-3">Price</th>
+              <th class="px-5 py-3">Stock</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr v-for="product in previewProducts" :key="product.id" class="hover:bg-gray-50">
+              <td class="px-5 py-3 font-medium text-gray-900">{{ product.name }}</td>
+              <td class="px-5 py-3 capitalize text-gray-500">{{ product.type }}</td>
+              <td class="px-5 py-3 text-gray-700">${{ product.price.toFixed(2) }}</td>
+              <td class="px-5 py-3">
+                <span
+                  class="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  :class="product.stock === 0 ? 'bg-red-100 text-red-700' : product.stock < 5 ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'"
+                >
+                  {{ product.stock === 0 ? 'Out of stock' : product.stock }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
+
+    <!-- Upcoming events preview -->
+    <section aria-labelledby="events-heading">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 id="events-heading" class="text-xl font-bold text-gray-900">Upcoming Events</h2>
+        <RouterLink to="/admin/events" class="text-sm font-semibold text-violet-700 hover:text-violet-900">
+          View all
+        </RouterLink>
+      </div>
+
+      <div class="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+        <div v-if="isInitialLoading" class="p-6 text-sm text-gray-400">Loading…</div>
+        <div v-else-if="upcomingEvents.length === 0" class="p-6 text-sm text-gray-400">No upcoming events scheduled.</div>
+        <table v-else class="w-full text-left text-sm">
+          <thead class="bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <tr>
+              <th class="px-5 py-3">Event</th>
+              <th class="px-5 py-3">Date</th>
+              <th class="px-5 py-3">Category</th>
+              <th class="px-5 py-3">Time</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr v-for="event in upcomingEvents" :key="event.id" class="hover:bg-gray-50">
+              <td class="px-5 py-3 font-medium text-gray-900">{{ event.title }}</td>
+              <td class="px-5 py-3 text-gray-700">{{ formatEventDate(event.date) }}</td>
+              <td class="px-5 py-3 text-gray-500">{{ event.category || '—' }}</td>
+              <td class="px-5 py-3 text-gray-500">{{ event.time || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </div>
 </template>
 
@@ -180,23 +225,21 @@ const overviewItems = computed(() => [
     attentionText: '',
     path: '/admin/events',
   },
-  {
-    label: 'Customers',
-    value: 0,
-    valueLabel: 'customer data unavailable',
-    attentionCount: 0,
-    attentionLabel: '',
-    attentionText: 'Customer API not yet available',
-    path: '/admin/customers',
-  },
 ])
 
-const quickLinks = [
-  { label: 'Manage products', path: '/admin/products', description: 'Open the product workspace' },
-  { label: 'Review orders', path: '/admin/orders', description: 'Open the order workspace' },
-  { label: 'Manage events', path: '/admin/events', description: 'Open the event workspace' },
-  { label: 'View customers', path: '/admin/customers', description: 'Open the customer workspace' },
-]
+const previewProducts = computed(() => products.value.slice(0, 5))
+
+const upcomingEvents = computed(() =>
+  events.value
+    .filter(e => e.date >= today.value)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 5)
+)
+
+function formatEventDate(dateStr: string) {
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+}
 
 async function loadStats() {
   if (isLoading.value) {
