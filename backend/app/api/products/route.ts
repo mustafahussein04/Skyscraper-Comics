@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getClient, toObject, toObjects } from '@/lib/db'
 import { corsHeaders, handleOptions } from '@/lib/cors'
 import { parseProductInput, validateProduct } from '@/lib/product-input'
-import { storeProductImage, validateProductImage } from '@/lib/storage'
+import { publicOrigin, storeProductImage, validateProductImage } from '@/lib/storage'
 
 export function OPTIONS() {
   return handleOptions()
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   }
 
   const image = input.imageFile
-    ? (await storeProductImage(input.imageFile, new URL(request.url).origin)).url
+    ? (await storeProductImage(input.imageFile, publicOrigin(request))).url
     : input.image
 
   const rs = await db.execute({

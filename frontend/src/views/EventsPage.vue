@@ -212,6 +212,7 @@
             <button
               type="button"
               class="flex items-center gap-2 bg-blue-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              @click="addingEvent = true"
             >
               <Plus class="w-4 h-4" />
               Add Event
@@ -254,6 +255,13 @@
         </div>
       </div>
     </div>
+
+    <AdminEventEditModal
+      v-if="addingEvent"
+      :event="blankEvent()"
+      @close="addingEvent = false"
+      @save="handleCreateEvent"
+    />
   </Teleport>
 </template>
 
@@ -264,7 +272,8 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { Check, ChevronLeft, ChevronRight, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-next'
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
-import { getEvents, deleteEvent } from '@/services/api'
+import { getEvents, createEvent, deleteEvent } from '@/services/api'
+import AdminEventEditModal from '@/components/admin/AdminEventEditModal.vue'
 import { isValidRegistrationLink } from '@/utils/registrationLink'
 import { trackEventLinkClick } from '@/composables/usePageTracking'
 import type { AdminEvent } from '@/types/event'
@@ -273,6 +282,20 @@ import { trackEvent } from '@/composables/useAnalytics'
 
 const isAdmin = isAdminAuthenticated()
 const showManageModal = ref(false)
+const addingEvent = ref(false)
+
+const blankEvent = (): AdminEvent => ({
+  id: 0,
+  title: '',
+  description: '',
+  date: '',
+  category: '',
+  time: '',
+  game: '',
+  capacity: '',
+  entryFee: '',
+  registrationLink: '',
+})
 const selectedDate = ref<string | null>(null)
 const loading = ref(true)
 const rawEvents = ref<AdminEvent[]>([])
@@ -418,6 +441,13 @@ const handleDeleteEvent = async (id: number) => {
   if (!window.confirm('Delete this event? This cannot be undone.')) return
   await deleteEvent(id)
   rawEvents.value = rawEvents.value.filter(e => e.id !== id)
+}
+
+const handleCreateEvent = async (newEvent: AdminEvent) => {
+  const { id: _id, ...data } = newEvent
+  const created = await createEvent(data)
+  rawEvents.value.push(created)
+  addingEvent.value = false
 }
 
 const sidebarEvents = computed(() => {

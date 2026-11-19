@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getClient, toObject } from '@/lib/db'
 import { corsHeaders, handleOptions } from '@/lib/cors'
 import { parseProductInput, validateProduct } from '@/lib/product-input'
-import { deleteProductImage, storeProductImage, validateProductImage } from '@/lib/storage'
+import { deleteProductImage, publicOrigin, storeProductImage, validateProductImage } from '@/lib/storage'
 
 type RouteContext = { params: Promise<{ id: string }> }
 
@@ -35,7 +35,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
   }
 
   const uploaded = input.imageFile
-    ? await storeProductImage(input.imageFile, new URL(request.url).origin)
+    ? await storeProductImage(input.imageFile, publicOrigin(request))
     : null
   const image = uploaded?.url ?? (input.image || existing.image)
 

@@ -25,6 +25,16 @@ export function validateProductImage(file: File | null): string | null {
   return null
 }
 
+export function publicOrigin(request: Request): string {
+  const envBase = process.env.PUBLIC_API_URL?.trim()
+  if (envBase) return envBase.replace(/\/$/, '')
+  const headers = request.headers
+  const host = headers.get('x-forwarded-host') ?? headers.get('host')
+  const proto = headers.get('x-forwarded-proto') ?? 'https'
+  if (host) return `${proto}://${host}`
+  return new URL(request.url).origin
+}
+
 export async function storeProductImage(file: File, requestOrigin: string) {
   const key = `products/${crypto.randomUUID()}.${extensionForType(file.type)}`
   const body = Buffer.from(await file.arrayBuffer())
