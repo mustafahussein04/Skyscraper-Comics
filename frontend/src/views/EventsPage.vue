@@ -16,9 +16,29 @@
         <!-- Calendar column: the legend lives inside it, so its right edge aligns with the calendar's -->
         <div class="flex-1 min-w-0">
 
-          <!-- FullCalendar -->
+          <!-- FullCalendar with custom header (FullCalendar's own toolbar buttons
+               render chrome that resists CSS overrides — we own the header instead) -->
           <div class="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-            <FullCalendar :options="calendarOptions" />
+            <div class="flex items-center justify-between bg-blue-900 px-5 py-4">
+              <button
+                type="button"
+                class="p-1 rounded hover:bg-white/15 transition-colors text-white"
+                @click="calendarApi?.prev()"
+                aria-label="Previous month"
+              >
+                <ChevronLeft class="w-5 h-5" />
+              </button>
+              <h2 class="text-white text-lg font-bold">{{ calendarTitle }}</h2>
+              <button
+                type="button"
+                class="p-1 rounded hover:bg-white/15 transition-colors text-white"
+                @click="calendarApi?.next()"
+                aria-label="Next month"
+              >
+                <ChevronRight class="w-5 h-5" />
+              </button>
+            </div>
+            <FullCalendar ref="calendarRef" :options="calendarOptions" />
           </div>
 
           <!-- Category filters -->
@@ -188,10 +208,11 @@
         <!-- Modal body -->
         <div class="flex-1 overflow-y-auto px-6 py-5">
           <div class="flex items-center justify-between mb-4">
-            <p class="text-sm text-gray-500">{{ calendarEvents.length }} event{{ calendarEvents.length !== 1 ? 's' : '' }} total</p>
+            <p class="text-sm text-gray-500">{{ rawEvents.length }} event{{ rawEvents.length !== 1 ? 's' : '' }} total</p>
             <button
               type="button"
               class="flex items-center gap-2 bg-blue-900 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors"
+              @click="addingEvent = true"
             >
               <Plus class="w-4 h-4" />
               Add Event
@@ -200,29 +221,25 @@
 
           <div class="space-y-3">
             <div
-              v-for="event in calendarEvents"
-              :key="event.title + event.start"
+              v-for="event in rawEvents"
+              :key="event.id"
               class="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3"
             >
               <div>
                 <p class="font-semibold text-gray-900">{{ event.title }}</p>
-                <p class="text-sm text-gray-500">{{ event.start }} &middot; {{ event.extendedProps.category }}</p>
+                <p class="text-sm text-gray-500">{{ event.date }} &middot; {{ event.category }}</p>
               </div>
               <div class="flex items-center gap-2">
                 <button
                   type="button"
-                  class="text-sm font-medium text-blue-700 hover:text-blue-900 px-3 py-1 rounded border border-blue-200 hover:bg-blue-50 transition-colors"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
                   class="text-sm font-medium text-red-600 hover:text-red-800 px-3 py-1 rounded border border-red-200 hover:bg-red-50 transition-colors"
+                  @click="handleDeleteEvent(event.id)"
                 >
                   Delete
                 </button>
               </div>
             </div>
+            <p v-if="rawEvents.length === 0" class="text-sm text-gray-400 text-center py-4">No events.</p>
           </div>
         </div>
 
@@ -238,6 +255,13 @@
         </div>
       </div>
     </div>
+
+    <AdminEventEditModal
+      v-if="addingEvent"
+      :event="blankEvent()"
+      @close="addingEvent = false"
+      @save="handleCreateEvent"
+    />
   </Teleport>
 </template>
 
@@ -246,19 +270,38 @@ import { ref, computed, onMounted } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { Check, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-next'
+import { Check, ChevronLeft, ChevronRight, Clock, DollarSign, Gamepad2, Plus, Users, X } from 'lucide-vue-next'
 import { isAdminAuthenticated } from '@/composables/useAdminAuth'
-import { getEvents } from '@/services/api'
+import { getEvents, createEvent, deleteEvent } from '@/services/api'
+import AdminEventEditModal from '@/components/admin/AdminEventEditModal.vue'
 import { isValidRegistrationLink } from '@/utils/registrationLink'
+import { trackEventLinkClick } from '@/composables/usePageTracking'
 import type { AdminEvent } from '@/types/event'
 import { EVENT_CATEGORIES, getCategoryColor as configGetCategoryColor } from '@/config/eventCategories'
 import { trackEvent } from '@/composables/useAnalytics'
 
 const isAdmin = isAdminAuthenticated()
 const showManageModal = ref(false)
+const addingEvent = ref(false)
+
+const blankEvent = (): AdminEvent => ({
+  id: 0,
+  title: '',
+  description: '',
+  date: '',
+  category: '',
+  time: '',
+  game: '',
+  capacity: '',
+  entryFee: '',
+  registrationLink: '',
+})
 const selectedDate = ref<string | null>(null)
 const loading = ref(true)
 const rawEvents = ref<AdminEvent[]>([])
+const calendarRef = ref<InstanceType<typeof FullCalendar> | null>(null)
+const calendarTitle = ref('')
+const calendarApi = computed(() => calendarRef.value?.getApi())
 
 onMounted(async () => {
   try {
@@ -287,11 +330,11 @@ const getCategoryColor = (category: string) => configGetCategoryColor(category)
 
 const handleRegisterClick = (event: ReturnType<typeof toCalendarEvent>) => {
   trackEvent('register_event_click', {
-    // "event_name" would clash with GA4's built-in Event name dimension
     event_title: event.title,
     event_category: event.extendedProps.category,
     event_date: event.start,
   })
+  trackEventLinkClick(event.title)
 }
 
 const calendarEvents = computed(() => {
@@ -367,6 +410,8 @@ const handleDateClick = (info: any) => {
 // wiping the outline class. Re-apply it if the selected date is in the new range;
 // if it isn't, clear the outline (the sidebar also falls back to Upcoming Events).
 const handleDatesSet = (arg: any) => {
+  // Mirror FullCalendar's current view title into our custom header
+  calendarTitle.value = arg.view.title
   if (!selectedDate.value) return
   const start = arg.startStr.slice(0, 10)
   const end = arg.endStr.slice(0, 10) // exclusive
@@ -383,6 +428,7 @@ const calendarOptions = computed(() => ({
   plugins: [dayGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
   contentHeight: 680,
+  headerToolbar: false as const,
   dateClick: handleDateClick,
   eventClick: (info: { event: { startStr: string } }) => {
     selectedDate.value = info.event.startStr.slice(0, 10)
@@ -390,6 +436,19 @@ const calendarOptions = computed(() => ({
   datesSet: handleDatesSet,
   events: calendarEvents.value,
 }))
+
+const handleDeleteEvent = async (id: number) => {
+  if (!window.confirm('Delete this event? This cannot be undone.')) return
+  await deleteEvent(id)
+  rawEvents.value = rawEvents.value.filter(e => e.id !== id)
+}
+
+const handleCreateEvent = async (newEvent: AdminEvent) => {
+  const { id: _id, ...data } = newEvent
+  const created = await createEvent(data)
+  rawEvents.value.push(created)
+  addingEvent.value = false
+}
 
 const sidebarEvents = computed(() => {
   const today = new Date().toISOString().split('T')[0]
@@ -410,27 +469,6 @@ const sidebarEvents = computed(() => {
 </script>
 
 <style scoped>
-/* Header toolbar - dark blue bar */
-:deep(.fc-header-toolbar) {
-  background-color: #1e3a8a;
-  padding: 14px 20px;
-  margin-bottom: 0 !important;
-}
-
-:deep(.fc-toolbar-title) {
-  color: white;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-:deep(.fc-button:hover) {
-  background: rgba(255, 255, 255, 0.15) !important;
-}
-
-:deep(.fc-button:focus) {
-  box-shadow: none !important;
-}
-
 /* Day name headers */
 :deep(.fc-col-header-cell) {
   background: white;
@@ -501,3 +539,4 @@ const sidebarEvents = computed(() => {
   border-color: #e5e7eb !important;
 }
 </style>
+

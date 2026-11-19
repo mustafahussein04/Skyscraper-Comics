@@ -204,11 +204,7 @@ const router = createRouter({
         {
           path: 'customers',
           name: 'Admin Customers',
-          component: () => import('../views/admin/AdminSectionPage.vue'),
-          props: {
-            title: 'Customers',
-            description: 'View customer information and support workflows from this area.',
-          },
+          component: () => import('../views/admin/AdminCustomersPage.vue'),
           meta: { title: 'Customers' },
         },
       ],

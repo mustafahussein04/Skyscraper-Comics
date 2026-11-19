@@ -188,12 +188,17 @@ onMounted(async () => {
 })
 
 const events = computed(() => {
-  return rawEvents.value.slice(0, 2).map((event) => ({
-    id: event.id,
-    title: event.title,
-    desc: event.description ?? '',
-    date: event.date ?? '',
-    time: event.time ?? '',
-  }))
+  const today = new Date().toISOString().slice(0, 10)
+  return rawEvents.value
+    .filter((event) => (event.date ?? '') >= today)
+    .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''))
+    .slice(0, 2)
+    .map((event) => ({
+      id: event.id,
+      title: event.title,
+      desc: event.description ?? '',
+      date: event.date ?? '',
+      time: event.time ?? '',
+    }))
 })
 </script>
